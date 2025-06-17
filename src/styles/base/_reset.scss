@@ -1,0 +1,41 @@
+// src/styles/base/_reset.scss
+
+/* A very simple reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  // Consider `scroll-behavior: smooth;` if not handled by Astro/HTML class
+}
+
+body {
+  line-height: 1.6;
+  font-family: sans-serif; // Placeholder, will be defined in _variables.scss or _typography.scss
+  // background-color: #fff; // Placeholder
+  // color: #333; // Placeholder
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+#root, #__next { // Common for some frameworks, maybe not needed for Astro
+  isolation: isolate;
+}

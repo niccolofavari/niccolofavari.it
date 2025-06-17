@@ -1,0 +1,107 @@
+// src/styles/base/_typography.scss
+@use '../utils/variables' as *;
+
+body {
+  font-family: $font-family-sans;
+  font-size: $font-size-base;
+  color: $color-text-dark; // Default light mode text color
+  background-color: $color-bg-light; // Default light mode background
+}
+
+// Basic heading styles
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-serif; // Example: use serif for headings
+  line-height: $line-height-heading;
+  margin-bottom: $spacing-md;
+  font-weight: 700; // Adjust as needed
+}
+
+h1 { font-size: 2.5rem; }   // Example sizes
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+p {
+  margin-bottom: $spacing-md;
+}
+
+a {
+  color: $color-link;
+  text-decoration: none; // Personal preference, can add underline on hover
+
+  &:hover,
+  &:focus {
+    color: $color-link-hover;
+    text-decoration: underline;
+  }
+}
+
+strong, b {
+  font-weight: bold;
+}
+
+em, i {
+  font-style: italic;
+}
+
+// Basic list styling
+ul, ol {
+  margin-bottom: $spacing-md;
+  padding-left: $spacing-lg; // Indent lists
+}
+
+li {
+  margin-bottom: $spacing-sm / 2;
+}
+
+// Code blocks and inline code
+pre, code, kbd, samp {
+  font-family: $font-family-mono;
+  font-size: $font-size-sm;
+}
+
+pre {
+  background-color: #f8f9fa; // Light background for code blocks
+  border: 1px solid $color-border;
+  border-radius: $border-radius-md;
+  padding: $spacing-md;
+  overflow-x: auto; // Allow horizontal scrolling for long lines
+  margin-bottom: $spacing-md;
+}
+
+// Horizontal rule
+hr {
+  border: 0;
+  border-top: 1px solid $color-border;
+  margin: $spacing-xl 0;
+}
+
+// Blockquotes
+blockquote {
+  margin: $spacing-md 0 $spacing-md $spacing-md;
+  padding-left: $spacing-md;
+  border-left: 4px solid $color-border;
+  font-style: italic;
+  color: lighten($color-text-dark, 20%);
+}
+
+// Dark mode specific typography adjustments (if needed beyond body color/bg)
+// This can be done using a class on the html/body or media query
+// For example, if using a class like .dark-mode on <html>
+/*
+.dark-mode {
+  body {
+    color: $color-text-light;
+    background-color: $color-bg-dark;
+  }
+  a {
+    color: lighten($color-link, 20%);
+    &:hover, &:focus {
+      color: lighten($color-link-hover, 20%);
+    }
+  }
+  // ... other dark mode overrides
+}
+*/

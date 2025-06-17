@@ -1,0 +1,77 @@
+// src/styles/global.scss
+
+// Import utilities (like variables and mixins) first so they are available globally
+@use 'utils/variables' as *;
+// @use 'utils/mixins'; // Uncomment if/when you create _mixins.scss
+
+// Import base styles (reset, typography, etc.)
+@use 'base/reset';
+@use 'base/typography';
+
+// Import layout styles (e.g., grid, container - if you create them)
+// @use 'layout/container';
+// @use 'layout/grid';
+
+// Import component-specific global styles (if any)
+// e.g., styles for buttons or cards that are used across many .astro components
+// @use 'components/buttons';
+
+// Import styles for MDX generated content
+// @use 'content/mdx'; // We will create this later
+
+// --- Dark Mode Handling ---
+// A common way to handle dark mode is by adding a class to the <html> or <body> tag.
+// Astro.props.lang in BaseLayout.astro can be used to set initial class based on OS preference.
+// A client-side script can then toggle this class and save preference.
+
+// Example using CSS Custom Properties for easier JS toggle and SCSS variable fallback
+:root {
+  --color-text: #{$color-text-dark};
+  --color-background: #{$color-bg-light};
+  --color-primary: #{$color-primary};
+  --color-link: #{$color-link};
+  --color-border: #{$color-border};
+  // Add more CSS custom properties as needed
+}
+
+// You can use a data attribute or class on <html> for dark mode
+// For example, if <html class="dark">
+.dark {
+  --color-text: #{$color-text-light};
+  --color-background: #{$color-bg-dark};
+  --color-link: #{lighten($color-link, 15%)}; // Make links a bit lighter in dark mode
+  --color-border: #{$color-border-dark};
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  // Ensure transitions for smooth dark mode switching if desired
+  transition: background-color $transition-base, color $transition-base;
+}
+
+// Update link colors to use CSS custom properties
+a {
+  color: var(--color-link);
+  &:hover,
+  &:focus {
+    color: darken(var(--color-link), 10%); // Note: darken might not work directly with CSS vars, adjust if needed
+  }
+}
+
+// Example: Update heading colors for dark mode if they differ significantly
+.dark {
+  h1, h2, h3, h4, h5, h6 {
+    // color: var(--color-text); // Or a specific heading color for dark mode
+  }
+}
+
+// Container class (example)
+.container {
+  width: 100%;
+  max-width: $container-max-width;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: $spacing-md;
+  padding-right: $spacing-md;
+}
