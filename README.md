@@ -21,7 +21,7 @@ The website is built using the following technologies:
 
 -   **Primary Framework**: [Astro](https://astro.build/)
 -   **Content Format**: [MDX](https://mdxjs.com/)
--   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+-   **Styling**: SCSS (Sass), utilizing custom CSS with Utopia.fyi fluid design principles for responsive typography and spacing.
 -   **Client-Side Interactivity**: Vanilla JavaScript and Astro Islands
 -   **Version Control**: Git
 -   **Hosting**: To Be Determined (TBD)
@@ -76,7 +76,7 @@ More information is available in the [Design & Typography](./.clinerules/04-desi
 -   `src/layouts/`: Astro layout components for page structure.
 -   `src/assets/`: Static assets processed by Astro (e.g., images for the `<Image>` component).
 -   `public/`: Static assets served directly (e.g., favicons, fonts).
--   `src/styles/`: Global CSS and Tailwind CSS configuration.
+-   `src/styles/`: Global SCSS styles (`global.scss`) and partials (e.g., `_variables.scss`, `_reset.scss`, `_typography.scss`) organized in subdirectories like `base/`, `utils/`.
 
 ## Contributing
 

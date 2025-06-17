@@ -26,10 +26,15 @@
     - Location: `public/`.
 - **Astro-Processed Assets (images for `<Image>` component, etc.)**:
     - Location: `src/assets/`.
-- **Styling (Tailwind CSS)**:
-    - Tailwind Config: `tailwind.config.js` (or `.cjs`, `.mjs`, `.ts`) in project root.
-    - Global Styles/Tailwind Layers: `src/styles/global.css` (or similar, to be imported into a layout or entry point).
-    - Usage: Primarily use Tailwind utility classes directly in `.astro` and MDX-compatible components.
+- **Styling (SCSS/Sass)**:
+    - Main global styles: `src/styles/global.scss`.
+    - SCSS Partials: Organized in subdirectories under `src/styles/` (e.g., `base/`, `utils/`, `layout/`, `components/`, `content/`). Key partials include:
+        - `utils/_variables.scss`: For design tokens (colors, fluid type/space scales, breakpoints).
+        - `base/_reset.scss`: For CSS reset/normalize.
+        - `base/_typography.scss`: For base typographic styles using fluid scales.
+    - Component-Scoped Styles: Use `<style lang="scss">` tags within `.astro` components for scoped styling, importing global variables/mixins as needed.
+    - MDX Content Styling: A dedicated `content/_mdx.scss` (imported into `global.scss` or `ContentLayout.astro`) will style HTML elements generated from MDX.
+    - Markup: Use semantic HTML and descriptive, BEM-like class names. Avoid utility-first classes.
 
 ## 3. Code Generation & Modification
 - **New MDX Content**: When creating new content pages, use a basic MDX template including frontmatter for `title`, `pubDate`, `updatedDate` (optional), and `growthStage`.
