@@ -12,21 +12,39 @@ export async function getStaticPaths() {
 
 const { lang } = Astro.params;
 
-// Fetch a few recent entries for different categories
-const commonFilter = (entry) => entry.collection === lang; // Filter by current language
+const categorySlugs = {
+  en: {
+    essays: "reflections-essays",
+    creations: "creations-projects",
+    learnings: "learnings-how-tos",
+    reviews: "reviews-curations",
+    notes: "notes-ephemera",
+  },
+  it: {
+    essays: "riflessioni-saggi",
+    creations: "creazioni-progetti",
+    learnings: "apprendimenti-guide",
+    reviews: "recensioni-curiosita",
+    notes: "note-efemere",
+  }
+};
 
+const currentCategorySlugs = categorySlugs[lang];
+
+// Fetch a few recent entries for different categories
 const recentEssays = (await getCollection(lang as 'en' | 'it', (entry) => 
-  entry.slug.startsWith('reflections-essays/')
+  entry.slug.startsWith(`${currentCategorySlugs.essays}/`)
 )).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 3);
 
 const recentCreations = (await getCollection(lang as 'en' | 'it', (entry) => 
-  entry.slug.startsWith('creations-projects/')
+  entry.slug.startsWith(`${currentCategorySlugs.creations}/`)
 )).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 3);
 
 const recentLearnings = (await getCollection(lang as 'en' | 'it', (entry) =>
-  entry.slug.startsWith('learnings-how-tos/')
+  entry.slug.startsWith(`${currentCategorySlugs.learnings}/`)
 )).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 3);
 
+// TODO: Fetch for reviews and notes if we want to display them on the homepage
 
 const siteTitle = lang === 'en' ? "My Digital Garden & Portfolio" : "Il Mio Giardino Digitale & Portfolio";
 const siteDescription = lang === 'en' 
@@ -84,8 +102,8 @@ function getEntryUrl(entry) {
         ))}
       </div>
       <div class="text-center mt-6">
-        <a href={`/${lang}/reflections-essays`} class="text-blue-600 dark:text-blue-400 hover:underline">
-          {currentTitles.exploreMore} Reflections & Essays &rarr;
+        <a href={`/${lang}/${currentCategorySlugs.essays}/`} class="text-blue-600 dark:text-blue-400 hover:underline">
+          {currentTitles.exploreMore} {sectionTitles[lang].essays} &rarr;
         </a>
       </div>
     </section>
@@ -112,8 +130,8 @@ function getEntryUrl(entry) {
         ))}
       </div>
       <div class="text-center mt-6">
-        <a href={`/${lang}/creations-projects`} class="text-blue-600 dark:text-blue-400 hover:underline">
-          {currentTitles.exploreMore} Creations & Projects &rarr;
+        <a href={`/${lang}/${currentCategorySlugs.creations}/`} class="text-blue-600 dark:text-blue-400 hover:underline">
+          {currentTitles.exploreMore} {sectionTitles[lang].creations} &rarr;
         </a>
       </div>
     </section>
@@ -140,8 +158,8 @@ function getEntryUrl(entry) {
         ))}
       </div>
       <div class="text-center mt-6">
-        <a href={`/${lang}/learnings-how-tos`} class="text-blue-600 dark:text-blue-400 hover:underline">
-          {currentTitles.exploreMore} Learnings & How-Tos &rarr;
+        <a href={`/${lang}/${currentCategorySlugs.learnings}/`} class="text-blue-600 dark:text-blue-400 hover:underline">
+          {currentTitles.exploreMore} {sectionTitles[lang].learnings} &rarr;
         </a>
       </div>
     </section>

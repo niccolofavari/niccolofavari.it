@@ -1,0 +1,50 @@
+---
+// src/pages/it/colophon.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE_TITLE_IT, AUTHOR_NAME } from '../../site-config';
+---
+<BaseLayout title={`Colophon - ${SITE_TITLE_IT}`} description={`Dettagli tecnici e filosofia dietro ${SITE_TITLE_IT}.`} lang="it">
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-8 text-center">Colophon</h1>
+      <div class="prose dark:prose-invert prose-lg mx-auto">
+        <p>
+          Questo sito è progettato e costruito da {AUTHOR_NAME} (Nick). È un progetto open-source e il codice può essere trovato su GitHub (link da aggiungere).
+        </p>
+        
+        <h2 class="text-2xl font-semibold mt-8 mb-4">Filosofia di Base</h2>
+        <p>
+          I principi guida sono quelli di un "giardino digitale" – uno spazio per l'apprendimento pubblico, la sperimentazione e contenuti in evoluzione. L'artigianalità e la volontà di esplorare le tecnologie web sono centrali. Per maggiori dettagli, consulta il documento sulla <a href="/.clinerules/01-core-philosophy.md" target="_blank" rel="noopener noreferrer">Filosofia di Base</a>.
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">Tecnologie e Tecniche</h2>
+        <ul>
+          <li><strong>Framework:</strong> <a href="https://astro.build/" target="_blank" rel="noopener noreferrer">Astro</a> per la generazione di siti statici.</li>
+          <li><strong>Contenuti:</strong> <a href="https://mdxjs.com/" target="_blank" rel="noopener noreferrer">MDX</a> per la creazione di contenuti ricchi.</li>
+          <li><strong>Stile:</strong> <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer">Tailwind CSS</a> per CSS utility-first.</li>
+          <li><strong>Tipografia:</strong> (Dettagli da aggiungere in base alle scelte dei font - vedi le <a href="/.clinerules/04-design-typography.md" target="_blank" rel="noopener noreferrer">regole di Design & Tipografia</a>).</li>
+          <li><strong>Internazionalizzazione (i18n):</strong> Versioni in inglese e italiano, con rilevamento della lingua e switcher.</li>
+          <li><strong>Controllo Versione:</strong> Git.</li>
+          <li><strong>Assistenza IA:</strong> Sviluppo assistito in modo significativo da Cline, un assistente di programmazione IA.</li>
+          <li><strong>Hosting:</strong> Da definire.</li>
+        </ul>
+        <p>
+          Maggiori dettagli tecnici si trovano nel documento sullo <a href="/.clinerules/02-technology-stack.md" target="_blank" rel="noopener noreferrer">Stack Tecnologico</a>.
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">Strategia dei Contenuti</h2>
+        <p>
+          I contenuti sono organizzati in diverse categorie ed evolvono attraverso "fasi di crescita" (Germoglio, Bocciolo, Sempreverde). Il sito mira alla cordialità SEO e all'integrazione di rich media. Vedi il documento sulla <a href="/.clinerules/03-content-strategy.md" target="_blank" rel="noopener noreferrer">Strategia dei Contenuti</a> per i dettagli.
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">Licenze</h2>
+        <p>
+          Il codice sorgente di questo progetto è rilasciato sotto <a href="/LICENSE_CODE.md">Licenza MIT</a>.
+        </p>
+        <p>
+          I contenuti (testi, immagini e altri media creati per questo sito da {AUTHOR_NAME}) sono dedicati al pubblico dominio tramite <a href="/LICENSE_CONTENT.md">CC0 1.0 Universale</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

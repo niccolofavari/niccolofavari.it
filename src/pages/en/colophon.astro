@@ -1,0 +1,50 @@
+---
+// src/pages/en/colophon.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE_TITLE_EN, AUTHOR_NAME } from '../../site-config';
+---
+<BaseLayout title={`Colophon - ${SITE_TITLE_EN}`} description={`Technical details and philosophy behind ${SITE_TITLE_EN}.`} lang="en">
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-8 text-center">Colophon</h1>
+      <div class="prose dark:prose-invert prose-lg mx-auto">
+        <p>
+          This site is designed and built by {AUTHOR_NAME} (Nick). It's an open-source project, and the code can be found on GitHub (link to be added).
+        </p>
+        
+        <h2 class="text-2xl font-semibold mt-8 mb-4">Core Philosophy</h2>
+        <p>
+          The guiding principles are those of a "digital garden" – a space for public learning, experimentation, and evolving content. Craftsmanship and a willingness to explore web technologies are central. For more, see the <a href="/.clinerules/01-core-philosophy.md" target="_blank" rel="noopener noreferrer">Core Philosophy document</a>.
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">Technologies & Techniques</h2>
+        <ul>
+          <li><strong>Framework:</strong> <a href="https://astro.build/" target="_blank" rel="noopener noreferrer">Astro</a> for static site generation.</li>
+          <li><strong>Content:</strong> <a href="https://mdxjs.com/" target="_blank" rel="noopener noreferrer">MDX</a> for rich content authoring.</li>
+          <li><strong>Styling:</strong> <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer">Tailwind CSS</a> for utility-first CSS.</li>
+          <li><strong>Typography:</strong> (Details to be added based on font choices - see <a href="/.clinerules/04-design-typography.md" target="_blank" rel="noopener noreferrer">Design & Typography rules</a>).</li>
+          <li><strong>Internationalization (i18n):</strong> English and Italian versions, with language detection and switching.</li>
+          <li><strong>Version Control:</strong> Git.</li>
+          <li><strong>AI Assistance:</strong> Development significantly assisted by Cline, an AI coding assistant.</li>
+          <li><strong>Hosting:</strong> TBD.</li>
+        </ul>
+        <p>
+          More technical details are in the <a href="/.clinerules/02-technology-stack.md" target="_blank" rel="noopener noreferrer">Technology Stack document</a>.
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">Content Strategy</h2>
+        <p>
+          Content is organized into several categories and evolves through "growth stages" (Seedling, Budding, Evergreen). The site aims for SEO friendliness and rich media integration. See the <a href="/.clinerules/03-content-strategy.md" target="_blank" rel="noopener noreferrer">Content Strategy document</a> for details.
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4">Licenses</h2>
+        <p>
+          The source code for this project is licensed under the <a href="/LICENSE_CODE.md">MIT License</a>.
+        </p>
+        <p>
+          The content (text, images, and other media created for this site by {AUTHOR_NAME}) is dedicated to the public domain via <a href="/LICENSE_CONTENT.md">CC0 1.0 Universal</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

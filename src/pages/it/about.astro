@@ -1,0 +1,37 @@
+---
+// src/pages/it/about.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE_TITLE_IT } from '../../site-config';
+
+const pageTitle = "Chi Sono (About Nick)";
+const pageDescription = `Scopri qualcosa di più su ${SITE_TITLE_IT}.`;
+---
+<BaseLayout title={pageTitle} description={pageDescription} lang="it">
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-8 text-center">{pageTitle}</h1>
+      <div class="prose dark:prose-invert prose-lg mx-auto">
+        <p>
+          Benvenuto nel mio piccolo angolo di internet! Sono Nick, uno sviluppatore backend con una vasta gamma di passioni che esploro e documento qui.
+        </p>
+        <p>
+          Questo sito funge da mio giardino digitale – un luogo per coltivare pensieri, condividere progetti e registrare i miei apprendimenti in aree come:
+        </p>
+        <ul>
+          <li>Tecnologia (sviluppo software, sviluppo di videogiochi, tinkering hardware)</li>
+          <li>Attività Creative (produzione musicale, fotografia, falegnameria)</li>
+          <li>Retro Gaming</li>
+          <li>Benessere Fisico (calisthenics)</li>
+          <li>Filosofia ed esplorazioni della coscienza</li>
+        </ul>
+        <p>
+          Sentiti libero di curiosare. I contenuti qui presenti sono in varie fasi di "crescita", da fugaci idee "germoglio" a pezzi più "sempreverdi".
+        </p>
+        <p>
+          Grazie per la visita!
+        </p>
+        {/* Puoi aggiungere informazioni più dettagliate su di te qui */}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
