@@ -1,16 +1,63 @@
 ---
+// src/pages/index.astro
+// This page will handle redirection to the language-specific homepage.
 
+// Determine preferred language (e.g., from headers, or default to 'en')
+// Astro.request.headers.get('accept-language') can be complex to parse robustly here.
+// For a simple approach, we can default to English or set a primary language.
+// A more advanced setup might involve a cookie or localStorage.
+
+const defaultLang = 'en'; // Set your site's default language
+const supportedLangs = ['en', 'it'];
+
+let preferredLang = defaultLang;
+
+// Basic browser language detection (can be improved)
+const acceptLanguage = Astro.request.headers.get('accept-language');
+if (acceptLanguage) {
+  const browserLangs = acceptLanguage.split(',').map(lang => lang.split(';')[0].toLowerCase().trim());
+  for (const lang of browserLangs) {
+    if (supportedLangs.includes(lang)) {
+      preferredLang = lang;
+      break;
+    }
+    // Check for primary language tag (e.g., 'en' from 'en-US')
+    const primaryLang = lang.split('-')[0];
+    if (supportedLangs.includes(primaryLang)) {
+      preferredLang = primaryLang;
+      break;
+    }
+  }
+}
+
+// Redirect to the language-specific homepage
+// Using a meta refresh for static sites, or Astro.redirect if server-side rendering.
+// For static builds, Astro.redirect only works in `getStaticPaths` or middleware.
+// A client-side redirect is another option.
+
+// Given this is a static page, a meta refresh or client-side script is common.
+// However, Astro's preferred way for static sites is often to just have a simple
+// landing page at the root, or to configure the server (if possible) for redirection.
+
+// For now, let's use a simple client-side redirect.
+// A better long-term solution might involve server configuration or Astro middleware if deploying to a supporting platform.
 ---
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<!doctype html>
+<html lang={preferredLang}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redirecting...</title>
+  <script define:vars={{ preferredLang }}>
+    // Client-side redirect
+    window.location.pathname = `/${preferredLang}/`;
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content={`0;url=/${preferredLang}/`} />
+    <p>Please <a href={`/${preferredLang}/`}>click here to continue</a>.</p>
+  </noscript>
+</head>
+<body>
+  <p style="text-align: center; padding-top: 2rem;">Redirecting to your preferred language...</p>
+</body>
 </html>

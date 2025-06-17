@@ -1,0 +1,152 @@
+---
+// src/pages/[lang]/index.astro
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro'; // Adjust path
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'it' } },
+  ];
+}
+
+const { lang } = Astro.params;
+
+// Fetch a few recent entries for different categories
+const commonFilter = (entry) => entry.collection === lang; // Filter by current language
+
+const recentEssays = (await getCollection(lang as 'en' | 'it', (entry) => 
+  entry.slug.startsWith('reflections-essays/')
+)).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 3);
+
+const recentCreations = (await getCollection(lang as 'en' | 'it', (entry) => 
+  entry.slug.startsWith('creations-projects/')
+)).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 3);
+
+const recentLearnings = (await getCollection(lang as 'en' | 'it', (entry) =>
+  entry.slug.startsWith('learnings-how-tos/')
+)).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 3);
+
+
+const siteTitle = lang === 'en' ? "My Digital Garden & Portfolio" : "Il Mio Giardino Digitale & Portfolio";
+const siteDescription = lang === 'en' 
+  ? "Welcome! Explore creations, reflections, reviews, and learnings." 
+  : "Benvenuto! Esplora creazioni, riflessioni, recensioni e apprendimenti.";
+
+const sectionTitles = {
+  en: {
+    essays: "Latest Reflections & Essays",
+    creations: "Recent Creations & Projects",
+    learnings: "New Learnings & How-Tos",
+    exploreMore: "Explore more in",
+  },
+  it: {
+    essays: "Ultime Riflessioni & Saggi",
+    creations: "Recenti Creazioni & Progetti",
+    learnings: "Nuovi Apprendimenti & Guide",
+    exploreMore: "Esplora di più in",
+  }
+};
+
+const currentTitles = sectionTitles[lang];
+
+function getEntryUrl(entry) {
+  const slugParts = entry.slug.split('/');
+  const category = slugParts.shift();
+  const actualSlug = slugParts.join('/');
+  return `/${lang}/${category}/${actualSlug}`;
+}
+---
+<BaseLayout title={siteTitle} description={siteDescription} lang={lang}>
+  <section class="text-center py-12">
+    <h1 class="text-5xl font-extrabold mb-4">{siteTitle}</h1>
+    <p class="text-xl text-slate-600 dark:text-slate-400">{siteDescription}</p>
+  </section>
+
+  {/* Recent Essays Section */}
+  {recentEssays.length > 0 && (
+    <section class="py-8">
+      <h2 class="text-3xl font-bold mb-6">{currentTitles.essays}</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        {recentEssays.map(entry => (
+          <div class="p-6 bg-white dark:bg-slate-800 rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold mb-2">
+              <a href={getEntryUrl(entry)} class="text-blue-600 dark:text-blue-400 hover:underline">
+                {entry.data.title}
+              </a>
+            </h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">
+              {new Date(entry.data.pubDate).toLocaleDateString(lang, { year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+            <p class="text-slate-700 dark:text-slate-300 text-sm mb-3 line-clamp-3">{entry.data.description}</p>
+            <a href={getEntryUrl(entry)} class="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">Read more &rarr;</a>
+          </div>
+        ))}
+      </div>
+      <div class="text-center mt-6">
+        <a href={`/${lang}/reflections-essays`} class="text-blue-600 dark:text-blue-400 hover:underline">
+          {currentTitles.exploreMore} Reflections & Essays &rarr;
+        </a>
+      </div>
+    </section>
+  )}
+
+  {/* Recent Creations Section */}
+  {recentCreations.length > 0 && (
+    <section class="py-8">
+      <h2 class="text-3xl font-bold mb-6">{currentTitles.creations}</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        {recentCreations.map(entry => (
+          <div class="p-6 bg-white dark:bg-slate-800 rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold mb-2">
+              <a href={getEntryUrl(entry)} class="text-blue-600 dark:text-blue-400 hover:underline">
+                {entry.data.title}
+              </a>
+            </h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">
+              {new Date(entry.data.pubDate).toLocaleDateString(lang, { year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+            <p class="text-slate-700 dark:text-slate-300 text-sm mb-3 line-clamp-3">{entry.data.description}</p>
+            <a href={getEntryUrl(entry)} class="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">Read more &rarr;</a>
+          </div>
+        ))}
+      </div>
+      <div class="text-center mt-6">
+        <a href={`/${lang}/creations-projects`} class="text-blue-600 dark:text-blue-400 hover:underline">
+          {currentTitles.exploreMore} Creations & Projects &rarr;
+        </a>
+      </div>
+    </section>
+  )}
+
+   {/* Recent Learnings Section */}
+   {recentLearnings.length > 0 && (
+    <section class="py-8">
+      <h2 class="text-3xl font-bold mb-6">{currentTitles.learnings}</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        {recentLearnings.map(entry => (
+          <div class="p-6 bg-white dark:bg-slate-800 rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold mb-2">
+              <a href={getEntryUrl(entry)} class="text-blue-600 dark:text-blue-400 hover:underline">
+                {entry.data.title}
+              </a>
+            </h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">
+              {new Date(entry.data.pubDate).toLocaleDateString(lang, { year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+            <p class="text-slate-700 dark:text-slate-300 text-sm mb-3 line-clamp-3">{entry.data.description}</p>
+            <a href={getEntryUrl(entry)} class="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">Read more &rarr;</a>
+          </div>
+        ))}
+      </div>
+      <div class="text-center mt-6">
+        <a href={`/${lang}/learnings-how-tos`} class="text-blue-600 dark:text-blue-400 hover:underline">
+          {currentTitles.exploreMore} Learnings & How-Tos &rarr;
+        </a>
+      </div>
+    </section>
+  )}
+
+  {/* TODO: Add sections for Reviews & Curations, Notes & Ephemera if desired */}
+
+</BaseLayout>

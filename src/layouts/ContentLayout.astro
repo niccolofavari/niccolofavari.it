@@ -1,0 +1,67 @@
+---
+// src/layouts/ContentLayout.astro
+import BaseLayout from './BaseLayout.astro';
+
+// This 'frontmatter' prop will be automatically passed by Astro
+// when rendering MDX files that specify this layout.
+// It contains all the frontmatter variables from the MDX file.
+const { frontmatter } = Astro.props;
+
+// Default values for props that might not be in every frontmatter
+const lang = frontmatter.lang || 'en';
+const pageTitle = frontmatter.title || 'Content Page';
+const pageDescription = frontmatter.description || 'An article from the digital garden.';
+const pubDate = frontmatter.pubDate ? new Date(frontmatter.pubDate).toLocaleDateString(lang, {
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+}) : 'Date not available';
+const updatedDate = frontmatter.updatedDate ? new Date(frontmatter.updatedDate).toLocaleDateString(lang, {
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+}) : null;
+
+// TODO: Add logic for GrowthStageIndicator component if desired
+// TODO: Add logic for Table of Contents (TOC) if frontmatter.toc is true
+---
+<BaseLayout title={pageTitle} description={pageDescription} lang={lang}>
+  <article class="prose dark:prose-invert prose-lg mx-auto">
+    <header class="mb-8">
+      <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-5xl">
+        {frontmatter.title}
+      </h1>
+      <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+        Published on <time datetime={frontmatter.pubDate}>{pubDate}</time>
+        {updatedDate && (
+          <> | Updated on <time datetime={frontmatter.updatedDate}>{updatedDate}</time></>
+        )}
+      </p>
+      {frontmatter.category && (
+        <p class="mt-1 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-500">
+          Category: {frontmatter.category}
+        </p>
+      )}
+       {frontmatter.growthStage && (
+        <p class="mt-1 text-xs text-blue-600 dark:text-blue-400">
+          Growth Stage: {frontmatter.growthStage}
+        </p>
+      )}
+    </header>
+    
+    <slot /> {/* The MDX content will be rendered here */}
+
+    {frontmatter.tags && frontmatter.tags.length > 0 && (
+      <footer class="mt-12 pt-6 border-t border-slate-200 dark:border-slate-700">
+        <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">Tags:</h3>
+        <div class="flex flex-wrap gap-2">
+          {frontmatter.tags.map((tag: string) => (
+            <span class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium px-2.5 py-0.5 rounded">
+              {tag}
+            </span>
+          ))}
+        </div>
+      </footer>
+    )}
+  </article>
+</BaseLayout>

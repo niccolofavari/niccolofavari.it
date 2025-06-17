@@ -1,0 +1,41 @@
+---
+// src/pages/[lang]/[category]/[...slug].astro
+import { getCollection } from 'astro:content';
+import ContentLayout from '../../../layouts/ContentLayout.astro'; // Adjust path as needed
+
+export async function getStaticPaths() {
+  // Get all entries from both 'en' and 'it' collections
+  const enEntries = await getCollection('en');
+  const itEntries = await getCollection('it');
+  const allEntries = [...enEntries, ...itEntries];
+
+  return allEntries.map(entry => {
+    const lang = entry.collection; // 'en' or 'it'
+    const slugParts = entry.slug.split('/'); // e.g., "reflections-essays/anatomy-of-a-metroidvania"
+
+    if (slugParts.length < 2) {
+      // This case should ideally not happen if content is structured correctly under category subfolders
+      // console.warn(`Entry with problematic slug: ${entry.collection}/${entry.slug}`);
+      // Fallback or skip this entry
+      return {
+        params: { lang, category: 'uncategorized', slug: entry.slug },
+        props: { entry },
+      };
+    }
+    
+    const category = slugParts.shift(); // First part is the category
+    const slug = slugParts.join('/');   // The rest is the actual slug for the page
+
+    return {
+      params: { lang, category, slug },
+      props: { entry },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+<ContentLayout frontmatter={entry.data}>
+  <Content />
+</ContentLayout>

@@ -1,0 +1,13 @@
+---
+// src/components/Footer.astro
+const currentYear = new Date().getFullYear();
+---
+<footer class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-center p-6 mt-12">
+  <div class="container mx-auto">
+    <p>&copy; {currentYear} Your Name Here. All rights reserved (unless otherwise stated by content license).</p>
+    <p class="mt-2 text-sm">
+      {/* Placeholder for Colophon link */}
+      <a href="/colophon" class="hover:text-slate-900 dark:hover:text-slate-100">About This Site (Colophon)</a>
+    </p>
+  </div>
+</footer>

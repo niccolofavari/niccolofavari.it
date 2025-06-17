@@ -1,0 +1,34 @@
+---
+// src/components/Header.astro
+const siteTitle = "My Digital Garden & Portfolio"; // Or your preferred site title
+
+// Placeholder navigation links - we'll make these dynamic later
+const navLinks = [
+  { name: "Home", href: "/" }, // Will need to be language-aware, e.g., /en/ or /it/
+  { name: "Creations", href: "/creations-projects" }, // Placeholder
+  { name: "Essays", href: "/reflections-essays" }, // Placeholder
+  { name: "Reviews", href: "/reviews-curations" }, // Placeholder
+  { name: "Learnings", href: "/learnings-how-tos" }, // Placeholder
+  { name: "Notes", href: "/notes-ephemera" }, // Placeholder
+];
+---
+<header class="bg-slate-100 dark:bg-slate-800 shadow-md">
+  <nav class="container mx-auto px-4 py-3 flex flex-wrap items-center justify-between">
+    <div class="text-2xl font-bold text-slate-700 dark:text-slate-200">
+      <a href="/">{siteTitle}</a> {/* Will also need to be language-aware */}
+    </div>
+    <div class="mt-4 md:mt-0">
+      {/* Language Switcher Placeholder - to be implemented */}
+      <span class="text-sm text-slate-500 dark:text-slate-400 mr-4">(Lang Switcher)</span>
+      
+      {navLinks.map(link => (
+        <a 
+          href={link.href} 
+          class="px-3 py-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors"
+        >
+          {link.name}
+        </a>
+      ))}
+    </div>
+  </nav>
+</header>
