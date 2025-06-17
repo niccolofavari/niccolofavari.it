@@ -55,7 +55,7 @@ a {
   color: var(--color-link);
   &:hover,
   &:focus {
-    color: darken(var(--color-link), 10%); // Note: darken might not work directly with CSS vars, adjust if needed
+    color: $color-link-hover; // Use the SCSS variable defined in _variables.scss
   }
 }
 
