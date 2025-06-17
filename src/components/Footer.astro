@@ -85,9 +85,9 @@ const socialLinkItems = [
   .site-footer {
     background-color: var(--color-background-secondary, lighten($color-bg-light, 5%));
     color: var(--color-text-secondary, $color-secondary); // Fallback to SCSS var
-    margin-top: $spacing-xxl;
-    padding: $spacing-xl 0;
-    font-size: $font-size-sm;
+    margin-top: $space-xxl; // Use fluid variable
+    padding: $space-xl 0; // Use fluid variable
+    font-size: $font-size-step-minus-1; // Use fluid variable
 
     .dark & {
       background-color: var(--color-background-secondary-dark, darken($color-bg-dark, 5%));
@@ -98,18 +98,18 @@ const socialLinkItems = [
   .site-footer__container {
     // .container class is defined in global.scss
     display: grid;
-    gap: $spacing-lg;
+    gap: $space-l; // Use fluid variable
 
     @media (min-width: $breakpoint-md) {
       grid-template-columns: 1fr 1fr; // Two columns on medium screens and up
-      gap: $spacing-xl;
+      gap: $space-xl; // Use fluid variable
     }
   }
 
   .site-footer__title {
-    font-size: $font-size-lg;
+    font-size: $font-size-step-1; // Use fluid variable
     font-weight: 600;
-    margin-bottom: $spacing-sm;
+    margin-bottom: $space-s; // Use fluid variable
     a {
       color: var(--color-text-heading, $color-text-dark); // Fallback
       text-decoration: none;
@@ -123,14 +123,14 @@ const socialLinkItems = [
   }
 
   .site-footer__description {
-    margin-bottom: $spacing-md;
+    margin-bottom: $space-m; // Use fluid variable
     line-height: 1.5;
   }
 
   .site-footer__social-links {
     display: flex;
-    gap: $spacing-md;
-    margin-bottom: $spacing-lg;
+    gap: $space-m; // Use fluid variable
+    margin-bottom: $space-l; // Use fluid variable
   }
 
   .social-icon {
@@ -152,10 +152,10 @@ const socialLinkItems = [
   }
   
   .site-footer__legal {
-    font-size: $font-size-xs * 1.1; // Slightly smaller than sm
+    font-size: $font-size-step-minus-2; // Use fluid variable
     line-height: 1.4;
     p {
-      margin-bottom: $spacing-xs / 2;
+      margin-bottom: $space-xs / 2; // Use fluid variable
     }
   }
 
@@ -174,10 +174,10 @@ const socialLinkItems = [
   }
   
   .site-footer__nav-title {
-    font-size: $font-size-md;
+    font-size: $font-size-step-0; // Use fluid variable
     font-weight: 600;
     color: var(--color-text-heading, $color-text-dark);
-    margin-bottom: $spacing-sm;
+    margin-bottom: $space-s; // Use fluid variable
     .dark & {
         color: var(--color-text-heading-dark, $color-text-light);
     }
@@ -186,9 +186,8 @@ const socialLinkItems = [
   .site-footer__nav-list {
     list-style: none;
     padding-left: 0;
-    space-y: $spacing-xs;
     li {
-        margin-bottom: $spacing-xs / 2;
+        margin-bottom: $space-xs; // Use fluid variable
     }
   }
 

@@ -72,6 +72,6 @@ a {
   max-width: $container-max-width;
   margin-left: auto;
   margin-right: auto;
-  padding-left: $spacing-md;
-  padding-right: $spacing-md;
+  padding-left: $space-m; // Use fluid space variable
+  padding-right: $space-m; // Use fluid space variable
 }

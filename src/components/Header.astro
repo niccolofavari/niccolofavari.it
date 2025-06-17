@@ -71,7 +71,7 @@ if (currentPath) {
     position: sticky;
     top: 0;
     z-index: $z-index-sticky;
-    padding: $spacing-sm 0;
+    padding: $space-s 0; // Use fluid variable
 
     .dark & { // Dark mode styles for header
         background-color: var(--color-background-secondary-dark, darken($color-bg-dark, 5%));
@@ -88,7 +88,7 @@ if (currentPath) {
   }
 
   .site-header__brand {
-    font-size: $font-size-xl * 1.2; // Slightly larger
+    font-size: $font-size-step-2; // Use fluid type scale
     font-weight: bold;
     a {
       color: var(--color-text); // Use CSS var for text color
@@ -102,21 +102,21 @@ if (currentPath) {
   .site-header__actions {
     display: flex;
     align-items: center;
-    margin-top: $spacing-sm; // For when it wraps on small screens
+    margin-top: $space-s; // Use fluid variable
     @media (min-width: $breakpoint-md) {
       margin-top: 0; // Reset margin on larger screens
     }
   }
 
   .site-header__lang-switcher {
-    padding: ($spacing-sm / 2) $spacing-sm;
+    padding: ($space-s / 2) $space-s; // Use fluid variable
     border-radius: $border-radius-md;
     text-decoration: none;
-    font-size: $font-size-sm;
+    font-size: $font-size-step-minus-1; // Use fluid font size
     text-transform: uppercase;
     font-weight: 600;
     color: var(--color-text);
-    margin-right: $spacing-sm;
+    margin-right: $space-s; // Use fluid variable
     transition: background-color $transition-base;
 
     &:hover, &:focus {
@@ -131,16 +131,16 @@ if (currentPath) {
   }
 
   .site-header__menu {
-    margin-left: $spacing-xs; // Small space after lang switcher
+    margin-left: $space-xs; // Use fluid variable
   }
   
   .site-header__menu-link {
-    padding: ($spacing-sm / 2) $spacing-sm;
+    padding: ($space-s / 2) $space-s; // Use fluid variable
     text-decoration: none;
     color: var(--color-text);
     border-radius: $border-radius-md;
     transition: background-color $transition-base, color $transition-base;
-    font-size: $font-size-md;
+    font-size: $font-size-step-0; // Use fluid font size
 
     &:hover, &:focus {
       background-color: rgba(0,0,0,0.05);

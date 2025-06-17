@@ -3,37 +3,39 @@
 
 body {
   font-family: $font-family-sans;
-  font-size: $font-size-base;
-  color: $color-text-dark; // Default light mode text color
-  background-color: $color-bg-light; // Default light mode background
+  font-size: $font-size-step-0; // Use fluid base size
+  line-height: $line-height-base;
+  color: var(--color-text, $color-text-dark); 
+  background-color: var(--color-background, $color-bg-light);
 }
 
 // Basic heading styles
 h1, h2, h3, h4, h5, h6 {
-  font-family: $font-family-serif; // Example: use serif for headings
+  font-family: $font-family-serif; 
   line-height: $line-height-heading;
-  margin-bottom: $spacing-md;
-  font-weight: 700; // Adjust as needed
+  margin-top: $space-l; // Use fluid space
+  margin-bottom: $space-m; // Use fluid space
+  font-weight: 700; 
 }
 
-h1 { font-size: 2.5rem; }   // Example sizes
-h2 { font-size: 2rem; }
-h3 { font-size: 1.75rem; }
-h4 { font-size: 1.5rem; }
-h5 { font-size: 1.25rem; }
-h6 { font-size: 1rem; }
+h1 { font-size: $font-size-step-5; } 
+h2 { font-size: $font-size-step-4; }
+h3 { font-size: $font-size-step-3; }
+h4 { font-size: $font-size-step-2; }
+h5 { font-size: $font-size-step-1; }
+h6 { font-size: $font-size-step-0; }
 
 p {
-  margin-bottom: $spacing-md;
+  margin-bottom: $space-m; // Use fluid space
 }
 
 a {
-  color: $color-link;
-  text-decoration: none; // Personal preference, can add underline on hover
+  color: var(--color-link, $color-link); // Use CSS var with SCSS fallback
+  text-decoration: none; 
 
   &:hover,
   &:focus {
-    color: $color-link-hover;
+    color: $color-link-hover; // SCSS variable for hover, as CSS var might not work with darken
     text-decoration: underline;
   }
 }
@@ -48,46 +50,61 @@ em, i {
 
 // Basic list styling
 ul, ol {
-  margin-bottom: $spacing-md;
-  padding-left: $spacing-lg; // Indent lists
+  margin-bottom: $space-m; // Use fluid space
+  padding-left: $space-l; 
 }
 
 li {
-  margin-bottom: $spacing-sm / 2;
+  margin-bottom: $space-s / 2; // Use fluid space
 }
 
 // Code blocks and inline code
 pre, code, kbd, samp {
   font-family: $font-family-mono;
-  font-size: $font-size-sm;
+  font-size: $font-size-step-minus-1; // Use fluid size
 }
 
 pre {
-  background-color: #f8f9fa; // Light background for code blocks
-  border: 1px solid $color-border;
+  background-color: var(--color-code-bg, #f8f9fa); // CSS var for theming
+  border: 1px solid var(--color-border, $color-border);
   border-radius: $border-radius-md;
-  padding: $spacing-md;
-  overflow-x: auto; // Allow horizontal scrolling for long lines
-  margin-bottom: $spacing-md;
+  padding: $space-m; // Use fluid space
+  overflow-x: auto; 
+  margin-bottom: $space-m; // Use fluid space
 }
 
 // Horizontal rule
 hr {
   border: 0;
-  border-top: 1px solid $color-border;
-  margin: $spacing-xl 0;
+  border-top: 1px solid var(--color-border, $color-border);
+  margin: $space-xl 0; // Use fluid space
 }
 
 // Blockquotes
 blockquote {
-  margin: $spacing-md 0 $spacing-md $spacing-md;
-  padding-left: $spacing-md;
-  border-left: 4px solid $color-border;
+  margin: $space-m 0 $space-m $space-m; // Use fluid space
+  padding-left: $space-m; // Use fluid space
+  border-left: 4px solid var(--color-accent, $color-accent); // Use accent color
   font-style: italic;
-  color: lighten($color-text-dark, 20%);
+  color: var(--color-blockquote-text, lighten($color-text-dark, 20%));
+  
+  p:last-child {
+    margin-bottom: 0;
+  }
 }
 
 // Dark mode specific typography adjustments (if needed beyond body color/bg)
+// These are now primarily handled by CSS Custom Properties in global.scss
+// but you can add specific overrides here if needed.
+/*
+.dark {
+  // Example:
+  // blockquote {
+  //   border-left-color: lighten($color-accent, 15%);
+  //   color: darken($color-text-light, 20%);
+  // }
+}
+*/
 // This can be done using a class on the html/body or media query
 // For example, if using a class like .dark-mode on <html>
 /*
