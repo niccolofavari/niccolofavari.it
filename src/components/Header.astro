@@ -1,34 +1,63 @@
 ---
 // src/components/Header.astro
-const siteTitle = "My Digital Garden & Portfolio"; // Or your preferred site title
+import { SITE_TITLE_EN, SITE_TITLE_IT, NAV_LINKS_CONFIG } from '../site-config';
 
-// Placeholder navigation links - we'll make these dynamic later
-const navLinks = [
-  { name: "Home", href: "/" }, // Will need to be language-aware, e.g., /en/ or /it/
-  { name: "Creations", href: "/creations-projects" }, // Placeholder
-  { name: "Essays", href: "/reflections-essays" }, // Placeholder
-  { name: "Reviews", href: "/reviews-curations" }, // Placeholder
-  { name: "Learnings", href: "/learnings-how-tos" }, // Placeholder
-  { name: "Notes", href: "/notes-ephemera" }, // Placeholder
-];
+const { lang, currentPath } = Astro.props; // lang and currentPath will be passed from BaseLayout
+
+const siteTitle = lang === 'it' ? SITE_TITLE_IT : SITE_TITLE_EN;
+const navLinks = lang === 'it' ? NAV_LINKS_CONFIG.it : NAV_LINKS_CONFIG.en;
+
+const otherLang = lang === 'en' ? 'it' : 'en';
+let otherLangPath = `/${otherLang}/`; // Default to other lang's homepage
+
+// Attempt to build the path for the other language
+if (currentPath) {
+  const pathParts = currentPath.split('/').filter(p => p); // remove empty parts
+  if (pathParts.length > 1) { // e.g. /en/category/slug or /en/category
+    pathParts[0] = otherLang; // replace lang part
+    otherLangPath = `/${pathParts.join('/')}${currentPath.endsWith('/') && pathParts.length === 2 ? '/' : ''}`;
+    
+    // Simple slug translation for known categories (can be expanded)
+    const currentCategorySlug = pathParts[1];
+    const currentNavLink = NAV_LINKS_CONFIG[lang]?.find(link => link.categorySlug === currentCategorySlug);
+    if (currentNavLink) {
+      const otherLangNavLink = NAV_LINKS_CONFIG[otherLang]?.find(link => link.name === currentNavLink.name || NAV_LINKS_CONFIG[lang].indexOf(currentNavLink) === NAV_LINKS_CONFIG[otherLang].indexOf(link) );
+      if (otherLangNavLink && otherLangNavLink.categorySlug !== 'home') {
+         pathParts[1] = otherLangNavLink.categorySlug;
+         otherLangPath = `/${pathParts.join('/')}${currentPath.endsWith('/') && pathParts.length === 2 ? '/' : ''}`;
+      }
+    }
+  }
+}
 ---
-<header class="bg-slate-100 dark:bg-slate-800 shadow-md">
+<header class="bg-slate-100 dark:bg-slate-800 shadow-md sticky top-0 z-50">
   <nav class="container mx-auto px-4 py-3 flex flex-wrap items-center justify-between">
     <div class="text-2xl font-bold text-slate-700 dark:text-slate-200">
-      <a href="/">{siteTitle}</a> {/* Will also need to be language-aware */}
+      <a href={`/${lang}/`}>{siteTitle}</a>
     </div>
-    <div class="mt-4 md:mt-0">
-      {/* Language Switcher Placeholder - to be implemented */}
-      <span class="text-sm text-slate-500 dark:text-slate-400 mr-4">(Lang Switcher)</span>
-      
-      {navLinks.map(link => (
-        <a 
-          href={link.href} 
-          class="px-3 py-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors"
-        >
-          {link.name}
-        </a>
-      ))}
+    <div class="mt-4 md:mt-0 flex items-center">
+      <a 
+        href={otherLangPath} 
+        aria-label={lang === 'en' ? 'Switch to Italian' : 'Passa all\'Inglese'}
+        class="px-3 py-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors text-sm uppercase font-semibold"
+      >
+        {otherLang.toUpperCase()}
+      </a>
+      <div class="ml-2"> {/* Desktop navigation */}
+        {navLinks.filter(link => link.name !== "Home").map(link => ( // Exclude Home from main nav if site title links to it
+          <a 
+            href={link.href} 
+            class:list={[
+              "px-3 py-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors",
+              { "bg-slate-200 dark:bg-slate-700 font-semibold": currentPath === link.href || (currentPath && link.href !== `/${lang}/` && currentPath.startsWith(link.href)) }
+            ]}
+            aria-current={currentPath === link.href ? "page" : false}
+          >
+            {link.name}
+          </a>
+        ))}
+      </div>
+      {/* TODO: Mobile menu (hamburger) can be added here */}
     </div>
   </nav>
 </header>
