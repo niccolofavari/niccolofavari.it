@@ -2,31 +2,60 @@
 // src/components/Header.astro
 import { SITE_TITLE_EN, SITE_TITLE_IT, NAV_LINKS_CONFIG } from '../site-config';
 
-const { lang, currentPath } = Astro.props; 
+interface NavLink {
+    name: string;
+    href: string;
+    categorySlug: string;
+}
+
+const { lang, currentPath, translationKey } = Astro.props; 
 
 const siteTitle = lang === 'it' ? SITE_TITLE_IT : SITE_TITLE_EN;
-const navLinks = lang === 'it' ? NAV_LINKS_CONFIG.it : NAV_LINKS_CONFIG.en;
+const navLinks: NavLink[] = lang === 'it' ? NAV_LINKS_CONFIG.it : NAV_LINKS_CONFIG.en;
 
 const otherLang = lang === 'en' ? 'it' : 'en';
 let otherLangPath = `/${otherLang}/`; 
 
-if (currentPath) {
-  const pathParts = currentPath.split('/').filter(p => p); 
-  if (pathParts.length > 1) { 
-    pathParts[0] = otherLang; 
-    otherLangPath = `/${pathParts.join('/')}${currentPath.endsWith('/') && pathParts.length === 2 ? '/' : ''}`;
-    
-    const currentCategorySlug = pathParts[1];
-    const currentLangNavs = NAV_LINKS_CONFIG[lang];
-    const otherLangNavs = NAV_LINKS_CONFIG[otherLang];
+// New logic: Find the translated page using the translationKey for content pages
+if (translationKey) {
+    const allContent = await Astro.glob('../content/**/*.mdx');
+    const translatedPage = allContent.find(p => 
+        p.frontmatter.translationKey === translationKey && p.frontmatter.lang === otherLang
+    );
 
-    if (currentLangNavs && otherLangNavs) {
-        const currentNavLinkIndex = currentLangNavs.findIndex(link => link.categorySlug === currentCategorySlug);
-        if (currentNavLinkIndex !== -1 && otherLangNavs[currentNavLinkIndex] && otherLangNavs[currentNavLinkIndex].categorySlug !== 'home') {
-            pathParts[1] = otherLangNavs[currentNavLinkIndex].categorySlug;
-            otherLangPath = `/${pathParts.join('/')}${currentPath.endsWith('/') && pathParts.length === 2 ? '/' : ''}`;
+    if (translatedPage && translatedPage.url) {
+        // The .url from glob is the path from the project root, e.g., /src/content/en/essays/my-essay.mdx
+        // We need to parse it to build the final web path.
+        const urlParts = translatedPage.url.split('/').filter(Boolean); // filter(Boolean) removes empty strings
+        // Expected structure: ['src', 'content', lang, category, slug.mdx]
+        if (urlParts.length === 5) {
+            const langPart = urlParts[2];
+            const categoryPart = urlParts[3];
+            const slugPart = urlParts[4].replace(/\.mdx$/, ''); // Remove .mdx extension
+            otherLangPath = `/${langPart}/${categoryPart}/${slugPart}/`;
         }
     }
+    // If no translation is found, it will default to the root of the other language, which is a safe fallback.
+} 
+// Fallback for non-content pages (like category indexes) that don't have a translationKey
+else if (currentPath) {
+  const pathParts = currentPath.split('/').filter((p: string) => p); 
+  
+  if (pathParts.length > 1) { 
+    pathParts[0] = otherLang; 
+    
+    const currentCategorySlug = pathParts[1];
+    const currentLangNavs = NAV_LINKS_CONFIG[lang as keyof typeof NAV_LINKS_CONFIG];
+    const otherLangNavs = NAV_LINKS_CONFIG[otherLang as keyof typeof NAV_LINKS_CONFIG];
+
+    if (currentLangNavs && otherLangNavs) {
+        const currentNavLinkIndex = currentLangNavs.findIndex((link: NavLink) => link.categorySlug === currentCategorySlug);
+        if (currentNavLinkIndex !== -1 && otherLangNavs[currentNavLinkIndex] && otherLangNavs[currentNavLinkIndex].categorySlug !== 'home') {
+            pathParts[1] = otherLangNavs[currentNavLinkIndex].categorySlug;
+        }
+    }
+    // Reconstruct the path. Add a trailing slash if the original path had one and it's a category index.
+    otherLangPath = `/${pathParts.join('/')}${currentPath.endsWith('/') && pathParts.length <= 2 ? '/' : ''}`;
   }
 }
 ---
@@ -44,7 +73,7 @@ if (currentPath) {
         {otherLang.toUpperCase()}
       </a>
       <div class="site-header__menu">
-        {navLinks.filter(link => link.categorySlug !== "home").map(link => {
+        {navLinks.filter((link: NavLink) => link.categorySlug !== "home").map((link: NavLink) => {
           const isActive = currentPath === link.href || (currentPath && link.href !== `/${lang}/` && currentPath.startsWith(link.href));
           return (
             <a 

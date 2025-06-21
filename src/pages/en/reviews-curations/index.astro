@@ -1,0 +1,95 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BookReviewCard from '../../../components/reviews/BookReviewCard.astro';
+import MovieReviewCard from '../../../components/reviews/MovieReviewCard.astro';
+import GameReviewCard from '../../../components/reviews/GameReviewCard.astro';
+import GadgetReviewCard from '../../../components/reviews/GadgetReviewCard.astro';
+
+// 1. Fetch all review entries for the 'en' language
+const allEnglishReviews = await getCollection('en', ({ slug }) => {
+  return slug.startsWith('reviews-curations/');
+});
+
+// 2. Group reviews by contentType
+const groupedReviews = allEnglishReviews.reduce((acc, review) => {
+  const type = review.data.contentType || 'general';
+  if (!acc[type]) {
+    acc[type] = [];
+  }
+  acc[type].push(review);
+  return acc;
+}, {} as Record<string, any[]>);
+
+const reviewCardComponents = {
+  'book-review': BookReviewCard,
+  'movie-review': MovieReviewCard,
+  'game-review': GameReviewCard,
+  'gadget-review': GadgetReviewCard,
+  'tech-review': GadgetReviewCard, // Also use GadgetReviewCard for tech-review
+};
+
+const pageTitle = "Reviews & Curations";
+const pageDescription = "A curated collection of reviews and reflections on books, movies, games, and gadgets.";
+
+const sections = {
+  'book-review': {
+    title: "Essential Reading",
+    description: "A selection of books that have profoundly shaped my perspective, offered new knowledge, or told unforgettable stories."
+  },
+  'movie-review': {
+    title: "Cinema Highlights",
+    description: "Films that have stood out for their masterful storytelling, breathtaking visuals, or innovative ideas. These are the movies that have stayed with me long after the credits rolled."
+  },
+  'game-review': {
+    title: "Interactive Worlds",
+    description: "An exploration of video games that excel in design, narrative, and mechanics. From sprawling open worlds to focused indie gems, these are the experiences I find most compelling."
+  },
+  'gadget-review': {
+    title: "Tools of the Trade",
+    description: "A look at the tech and tools that I use in my creative pursuits or that simply impress with their design and functionality."
+  },
+  'tech-review': {
+    title: "Tools of the Trade",
+    description: "A look at the tech and tools that I use in my creative pursuits or that simply impress with their design and functionality."
+  }
+};
+
+const sectionOrder = ['book-review', 'movie-review', 'game-review', 'gadget-review'];
+const sectionTitles = new Set();
+---
+<BaseLayout title={pageTitle} description={pageDescription} lang="en">
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-4">{pageTitle}</h1>
+      <p class="text-xl text-slate-600 dark:text-slate-400 mb-12">
+        Here, I share my thoughts on things that have captivated my attention, sparked new ideas, or simply brought me joy. This is a curated collection of reviews and reflections on books, movies, games, and gadgets that have left a lasting impression.
+      </p>
+
+      {sectionOrder.map(type => {
+        const sectionInfo = sections[type as keyof typeof sections];
+        if (!sectionInfo || sectionTitles.has(sectionInfo.title)) return null;
+
+        const typesForSection = Object.keys(sections).filter(key => sections[key as keyof typeof sections].title === sectionInfo.title);
+        const reviewsForSection = typesForSection.flatMap(t => groupedReviews[t] || []);
+
+        if (reviewsForSection.length === 0) return null;
+        sectionTitles.add(sectionInfo.title);
+
+        return (
+          <div class="mb-16">
+            <h2 class="text-3xl font-bold mb-3">{sectionInfo.title}</h2>
+            <p class="text-lg text-slate-600 dark:text-slate-400 mb-8">{sectionInfo.description}</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {reviewsForSection.map(review => {
+                const contentType = review.data.contentType as keyof typeof reviewCardComponents;
+                const CardComponent = reviewCardComponents[contentType];
+                return CardComponent ? <CardComponent review={review} /> : null;
+              })}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  </section>
+</BaseLayout>

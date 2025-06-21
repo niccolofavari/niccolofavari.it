@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets';
+
+export interface Props {
+  review: any;
+}
+
+const { review } = Astro.props;
+const entrySlugParts = review.slug.split('/');
+const entryActualSlug = entrySlugParts.slice(1).join('/');
+const entryUrl = `/${review.collection}/${entrySlugParts[0]}/${entryActualSlug}`;
+---
+<a href={entryUrl} class="block group">
+  <div class="overflow-hidden rounded-lg shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+    {review.data.coverImage && (
+      review.data.coverImage.startsWith('/') ? (
+        <Image 
+          src={review.data.coverImage} 
+          alt={review.data.coverImageAlt} 
+          width={800} 
+          height={600} 
+          class="w-full object-cover"
+        />
+      ) : (
+        <img 
+          src={review.data.coverImage} 
+          alt={review.data.coverImageAlt} 
+          width="800" 
+          height="600" 
+          class="w-full object-cover"
+        />
+      )
+    )}
+    <div class="p-4 bg-white dark:bg-slate-800">
+      <h3 class="font-semibold text-lg text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+        {review.data.title}
+      </h3>
+    </div>
+  </div>
+</a>

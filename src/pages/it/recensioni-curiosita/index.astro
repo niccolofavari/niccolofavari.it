@@ -1,0 +1,95 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BookReviewCard from '../../../components/reviews/BookReviewCard.astro';
+import MovieReviewCard from '../../../components/reviews/MovieReviewCard.astro';
+import GameReviewCard from '../../../components/reviews/GameReviewCard.astro';
+import GadgetReviewCard from '../../../components/reviews/GadgetReviewCard.astro';
+
+// 1. Fetch all review entries for the 'it' language
+const allItalianReviews = await getCollection('it', ({ slug }) => {
+  return slug.startsWith('recensioni-curiosita/');
+});
+
+// 2. Group reviews by contentType
+const groupedReviews = allItalianReviews.reduce((acc, review) => {
+  const type = review.data.contentType || 'general';
+  if (!acc[type]) {
+    acc[type] = [];
+  }
+  acc[type].push(review);
+  return acc;
+}, {} as Record<string, any[]>);
+
+const reviewCardComponents = {
+  'book-review': BookReviewCard,
+  'movie-review': MovieReviewCard,
+  'game-review': GameReviewCard,
+  'gadget-review': GadgetReviewCard,
+  'tech-review': GadgetReviewCard, // Also use GadgetReviewCard for tech-review
+};
+
+const pageTitle = "Recensioni e Curiosità";
+const pageDescription = "Una raccolta curata di recensioni e riflessioni su libri, film, giochi e gadget.";
+
+const sections = {
+  'book-review': {
+    title: "Letture Essenziali",
+    description: "Una selezione di libri che hanno profondamente plasmato la mia prospettiva, offerto nuove conoscenze o raccontato storie indimenticabili."
+  },
+  'movie-review': {
+    title: "Highlights Cinematografici",
+    description: "Film che si sono distinti per la loro narrazione magistrale, visioni mozzafiato o idee innovative. Questi sono i film che mi sono rimasti impressi molto tempo dopo i titoli di coda."
+  },
+  'game-review': {
+    title: "Mondi Interattivi",
+    description: "Un'esplorazione di videogiochi che eccellono in design, narrativa e meccaniche. Dai vasti mondi aperti alle gemme indie mirate, queste sono le esperienze che trovo più avvincenti."
+  },
+  'gadget-review': {
+    title: "Strumenti del Mestiere",
+    description: "Uno sguardo alla tecnologia e agli strumenti che uso nelle mie attività creative o che semplicemente impressionano per il loro design e la loro funzionalità."
+  },
+  'tech-review': {
+    title: "Strumenti del Mestiere",
+    description: "Uno sguardo alla tecnologia e agli strumenti che uso nelle mie attività creative o che semplicemente impressionano per il loro design e la loro funzionalità."
+  }
+};
+
+const sectionOrder = ['book-review', 'movie-review', 'game-review', 'gadget-review'];
+const sectionTitles = new Set();
+---
+<BaseLayout title={pageTitle} description={pageDescription} lang="it">
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold mb-4">{pageTitle}</h1>
+      <p class="text-xl text-slate-600 dark:text-slate-400 mb-12">
+        Qui condivido i miei pensieri su cose che hanno catturato la mia attenzione, scatenato nuove idee o semplicemente mi hanno dato gioia. Questa è una raccolta curata di recensioni e riflessioni su libri, film, giochi e gadget che hanno lasciato un'impressione duratura.
+      </p>
+
+      {sectionOrder.map(type => {
+        const sectionInfo = sections[type as keyof typeof sections];
+        if (!sectionInfo || sectionTitles.has(sectionInfo.title)) return null;
+
+        const typesForSection = Object.keys(sections).filter(key => sections[key as keyof typeof sections].title === sectionInfo.title);
+        const reviewsForSection = typesForSection.flatMap(t => groupedReviews[t] || []);
+
+        if (reviewsForSection.length === 0) return null;
+        sectionTitles.add(sectionInfo.title);
+
+        return (
+          <div class="mb-16">
+            <h2 class="text-3xl font-bold mb-3">{sectionInfo.title}</h2>
+            <p class="text-lg text-slate-600 dark:text-slate-400 mb-8">{sectionInfo.description}</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {reviewsForSection.map(review => {
+                const contentType = review.data.contentType as keyof typeof reviewCardComponents;
+                const CardComponent = reviewCardComponents[contentType];
+                return CardComponent ? <CardComponent review={review} /> : null;
+              })}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  </section>
+</BaseLayout>

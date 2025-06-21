@@ -9,6 +9,7 @@ const { frontmatter } = Astro.props;
 
 // Default values for props that might not be in every frontmatter
 const lang = frontmatter.lang || 'en';
+const translationKey = frontmatter.translationKey;
 const pageTitle = frontmatter.title || 'Content Page';
 const pageDescription = frontmatter.description || 'An article from the digital garden.';
 const pubDate = frontmatter.pubDate ? new Date(frontmatter.pubDate).toLocaleDateString(lang, {
@@ -25,7 +26,7 @@ const updatedDate = frontmatter.updatedDate ? new Date(frontmatter.updatedDate).
 // TODO: Add logic for GrowthStageIndicator component if desired
 // TODO: Add logic for Table of Contents (TOC) if frontmatter.toc is true
 ---
-<BaseLayout title={pageTitle} description={pageDescription} lang={lang}>
+<BaseLayout title={pageTitle} description={pageDescription} lang={lang} translationKey={translationKey}>
   <div class="content-layout-grid">
     <article class="main-content prose dark:prose-invert prose-lg">
       <header class="mb-8">
