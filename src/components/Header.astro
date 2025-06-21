@@ -63,101 +63,108 @@ if (currentPath) {
 </header>
 
 <style lang="scss">
+  @use 'sass:color';
   @use '../styles/utils/variables' as *;
 
   .site-header {
-    background-color: var(--color-background-secondary, lighten($color-bg-light, 5%)); // Using a fallback SCSS variable
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: $color-bg-light;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     position: sticky;
     top: 0;
     z-index: $z-index-sticky;
-    padding: $space-s 0; // Use fluid variable
-
-    .dark & { // Dark mode styles for header
-        background-color: var(--color-background-secondary-dark, darken($color-bg-dark, 5%));
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
+    padding: $space-s 0;
   }
 
   .site-header__nav {
-    // .container class is defined in global.scss
     display: flex;
-    flex-wrap: wrap; // Allow wrapping on small screens
     align-items: center;
     justify-content: space-between;
   }
 
-  .site-header__brand {
-    font-size: $font-size-step-2; // Use fluid type scale
-    font-weight: bold;
-    a {
-      color: var(--color-text); // Use CSS var for text color
-      text-decoration: none;
-      &:hover, &:focus {
-        color: var(--color-primary); // Use CSS var for primary color
-      }
+  .site-header__brand a {
+    font-size: $font-size-step-1;
+    font-weight: 700;
+    color: $color-text-dark;
+    text-decoration: none;
+    transition: color $transition-base;
+
+    &:hover, &:focus {
+      color: $color-secondary;
     }
   }
 
   .site-header__actions {
     display: flex;
     align-items: center;
-    margin-top: $space-s; // Use fluid variable
-    @media (min-width: $breakpoint-md) {
-      margin-top: 0; // Reset margin on larger screens
-    }
   }
 
   .site-header__lang-switcher {
-    padding: ($space-s / 2) $space-s; // Use fluid variable
+    padding: 0.5em 1em;
+    border: 1px solid $color-border;
     border-radius: $border-radius-md;
     text-decoration: none;
-    font-size: $font-size-step-minus-1; // Use fluid font size
-    text-transform: uppercase;
+    font-size: $font-size-step-minus-1;
     font-weight: 600;
-    color: var(--color-text);
-    margin-right: $space-s; // Use fluid variable
-    transition: background-color $transition-base;
+    color: $color-text-dark;
+    margin-right: $space-m;
+    transition: $transition-base;
 
     &:hover, &:focus {
-      background-color: rgba(0,0,0,0.05);
-      color: var(--color-primary);
-    }
-    .dark & {
-        &:hover, &:focus {
-            background-color: rgba(255,255,255,0.1);
-        }
+      background-color: $color-secondary;
+      color: $color-text-light;
+      border-color: $color-secondary;
     }
   }
 
-  .site-header__menu {
-    margin-left: $space-xs; // Use fluid variable
-  }
-  
   .site-header__menu-link {
-    padding: ($space-s / 2) $space-s; // Use fluid variable
+    padding: 0.5em 1em;
     text-decoration: none;
-    color: var(--color-text);
+    color: $color-text-dark;
     border-radius: $border-radius-md;
-    transition: background-color $transition-base, color $transition-base;
-    font-size: $font-size-step-0; // Use fluid font size
+    transition: $transition-base;
+    font-size: $font-size-step-0;
 
     &:hover, &:focus {
-      background-color: rgba(0,0,0,0.05);
-      color: var(--color-primary);
-    }
-    .dark & {
-        &:hover, &:focus {
-            background-color: rgba(255,255,255,0.1);
-        }
+      color: $color-secondary;
     }
 
     &.is-active {
-      background-color: rgba(0,0,0,0.07);
-      font-weight: 600;
-      color: var(--color-primary);
-      .dark & {
-        background-color: rgba(255,255,255,0.15);
+      font-weight: 700;
+      color: $color-primary;
+    }
+  }
+
+  // Dark Mode Styles
+  :global(.dark) {
+    .site-header {
+      background-color: $color-bg-dark;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .site-header__brand a {
+      color: $color-text-light;
+      &:hover, &:focus {
+        color: $color-accent;
+      }
+    }
+
+    .site-header__lang-switcher {
+      color: $color-text-light;
+      border-color: $color-border-dark;
+      &:hover, &:focus {
+        background-color: $color-accent;
+        color: $color-text-dark;
+        border-color: $color-accent;
+      }
+    }
+
+    .site-header__menu-link {
+      color: $color-text-light;
+      &:hover, &:focus {
+        color: $color-accent;
+      }
+      &.is-active {
+        color: $color-accent;
       }
     }
   }

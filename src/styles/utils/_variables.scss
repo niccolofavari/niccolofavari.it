@@ -1,8 +1,9 @@
 // src/styles/utils/_variables.scss
+@use 'sass:color';
 
 // --- Utopia Fluid Design Settings ---
 $utopia-min-width: 320px;
-$utopia-max-width: 1200px; // Example, adjust as needed
+$utopia-max-width: 1312px; // Example, adjust as needed
 
 // -- Fluid Type Scale (Example: Major Third, 16px at min, 20px at max for base) --
 // Generated using Utopia.fyi calculator or similar logic
@@ -54,22 +55,22 @@ $font-family-mono: "Menlo", "Consolas", "Monaco", "Liberation Mono", "Lucida Con
 $line-height-base: 1.7; // Increased for better readability with fluid type
 $line-height-heading: 1.3;
 
-// Colors - Define your palette
-$color-text-light: #f8f9fa; 
-$color-text-dark: #212529;  
+// Colors - Foresty Pastel Palette
+$color-text-light: #e0e0e0; // Soft gray for light text
+$color-text-dark: #2a2a2a;  // Very dark brown/charcoal for dark text
 
-$color-bg-light: #ffffff;
-$color-bg-dark: #121212; // Slightly darker dark background
+$color-bg-light: #f5f5f5; // Off-white background
+$color-bg-dark: #1c1c1c;  // Dark slate background
 
-$color-primary: #0056b3; // A slightly deeper blue
-$color-secondary: #5a6268; 
-$color-accent: #e67e22;   // A nice orange
+$color-primary: #4a4a4a; // Dark brown/charcoal for primary elements
+$color-secondary: #5a6e5a; // Muted forest green
+$color-accent: #8fbc8f;   // Lighter, pastel green for accents
 
-$color-link: $color-primary;
-$color-link-hover: darken($color-primary, 10%);
+$color-link: $color-secondary;
+$color-link-hover: color.adjust($color-secondary, $lightness: -10%);
 
-$color-border: #ced4da; 
-$color-border-dark: #343a40; 
+$color-border: #d3d3d3; // Light gray border
+$color-border-dark: #4a4a4a; // Dark gray border for dark mode
 
 // Breakpoints for Media Queries (can still be used for layout changes)
 $breakpoint-sm: 576px;
@@ -78,7 +79,7 @@ $breakpoint-lg: 992px;
 $breakpoint-xl: 1200px;
 
 // Container Max Widths
-$container-max-width: $breakpoint-lg; 
+$container-max-width: 1312px; 
 
 // Borders
 $border-radius-sm: 0.2rem;

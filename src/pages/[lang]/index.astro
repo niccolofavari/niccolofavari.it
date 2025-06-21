@@ -1,7 +1,8 @@
 ---
 // src/pages/[lang]/index.astro
 import { getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro'; // Adjust path
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE_TITLE_EN, SITE_TITLE_IT, SITE_DESCRIPTION_EN, SITE_DESCRIPTION_IT, NAV_LINKS_CONFIG } from '../../site-config';
 
 export async function getStaticPaths() {
   return [
@@ -11,160 +12,72 @@ export async function getStaticPaths() {
 }
 
 const { lang } = Astro.params;
+const isItalian = lang === 'it';
 
-const categorySlugs = {
-  en: {
-    essays: "reflections-essays",
-    creations: "creations-projects",
-    learnings: "learnings-how-tos",
-    reviews: "reviews-curations",
-    notes: "notes-ephemera",
-  },
-  it: {
-    essays: "riflessioni-saggi",
-    creations: "creazioni-progetti",
-    learnings: "apprendimenti-guide",
-    reviews: "recensioni-curiosita",
-    notes: "note-efemere",
+const allEntries = await getCollection(lang as 'en' | 'it');
+
+const groupedEntries = allEntries.reduce((acc, entry) => {
+  const [categorySlug] = entry.slug.split('/');
+  if (!acc[categorySlug]) {
+    acc[categorySlug] = [];
   }
-};
+  acc[categorySlug].push(entry);
+  return acc;
+}, {});
 
-const currentCategorySlugs = categorySlugs[lang];
+// Sort entries within each category by publication date
+for (const categorySlug in groupedEntries) {
+  groupedEntries[categorySlug].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+}
 
-// Fetch a few recent entries for different categories
-const recentEssays = (await getCollection(lang as 'en' | 'it', (entry) => 
-  entry.slug.startsWith(`${currentCategorySlugs.essays}/`)
-)).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 3);
+const navLinks = isItalian ? NAV_LINKS_CONFIG.it : NAV_LINKS_CONFIG.en;
 
-const recentCreations = (await getCollection(lang as 'en' | 'it', (entry) => 
-  entry.slug.startsWith(`${currentCategorySlugs.creations}/`)
-)).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 3);
+const categoryDisplayOrder = navLinks
+  .map(link => link.categorySlug)
+  .filter(slug => slug !== 'home' && groupedEntries[slug]);
 
-const recentLearnings = (await getCollection(lang as 'en' | 'it', (entry) =>
-  entry.slug.startsWith(`${currentCategorySlugs.learnings}/`)
-)).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 3);
+const siteTitle = isItalian ? SITE_TITLE_IT : SITE_TITLE_EN;
+const siteDescription = isItalian ? SITE_DESCRIPTION_EN : SITE_DESCRIPTION_IT;
 
-// TODO: Fetch for reviews and notes if we want to display them on the homepage
-
-const siteTitle = lang === 'en' ? "My Digital Garden & Portfolio" : "Il Mio Giardino Digitale & Portfolio";
-const siteDescription = lang === 'en' 
-  ? "Welcome! Explore creations, reflections, reviews, and learnings." 
-  : "Benvenuto! Esplora creazioni, riflessioni, recensioni e apprendimenti.";
-
-const sectionTitles = {
-  en: {
-    essays: "Latest Reflections & Essays",
-    creations: "Recent Creations & Projects",
-    learnings: "New Learnings & How-Tos",
-    exploreMore: "Explore more in",
-  },
-  it: {
-    essays: "Ultime Riflessioni & Saggi",
-    creations: "Recenti Creazioni & Progetti",
-    learnings: "Nuovi Apprendimenti & Guide",
-    exploreMore: "Esplora di più in",
-  }
-};
-
-const currentTitles = sectionTitles[lang];
+function getCategoryName(slug) {
+  const link = navLinks.find(l => l.categorySlug === slug);
+  return link ? link.name : slug;
+}
 
 function getEntryUrl(entry) {
-  const slugParts = entry.slug.split('/');
-  const category = slugParts.shift();
-  const actualSlug = slugParts.join('/');
-  return `/${lang}/${category}/${actualSlug}`;
+  const [category, ...slugParts] = entry.slug.split('/');
+  return `/${lang}/${category}/${slugParts.join('/')}`;
 }
 ---
 <BaseLayout title={siteTitle} description={siteDescription} lang={lang}>
-  <section class="text-center py-12">
-    <h1 class="text-5xl font-extrabold mb-4">{siteTitle}</h1>
-    <p class="text-xl text-slate-600 dark:text-slate-400">{siteDescription}</p>
-  </section>
-
-  {/* Recent Essays Section */}
-  {recentEssays.length > 0 && (
-    <section class="py-8">
-      <h2 class="text-3xl font-bold mb-6">{currentTitles.essays}</h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        {recentEssays.map(entry => (
-          <div class="p-6 bg-white dark:bg-slate-800 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-2">
-              <a href={getEntryUrl(entry)} class="text-blue-600 dark:text-blue-400 hover:underline">
-                {entry.data.title}
-              </a>
-            </h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">
-              {new Date(entry.data.pubDate).toLocaleDateString(lang, { year: 'numeric', month: 'long', day: 'numeric' })}
-            </p>
-            <p class="text-slate-700 dark:text-slate-300 text-sm mb-3 line-clamp-3">{entry.data.description}</p>
-            <a href={getEntryUrl(entry)} class="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">Read more &rarr;</a>
-          </div>
-        ))}
-      </div>
-      <div class="text-center mt-6">
-        <a href={`/${lang}/${currentCategorySlugs.essays}/`} class="text-blue-600 dark:text-blue-400 hover:underline">
-          {currentTitles.exploreMore} {sectionTitles[lang].essays} &rarr;
-        </a>
-      </div>
+  <div class="home-page container">
+    <section class="hero">
+      <h1 class="hero__title">{siteTitle}</h1>
+      <p class="hero__description">{siteDescription}</p>
     </section>
-  )}
 
-  {/* Recent Creations Section */}
-  {recentCreations.length > 0 && (
-    <section class="py-8">
-      <h2 class="text-3xl font-bold mb-6">{currentTitles.creations}</h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        {recentCreations.map(entry => (
-          <div class="p-6 bg-white dark:bg-slate-800 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-2">
-              <a href={getEntryUrl(entry)} class="text-blue-600 dark:text-blue-400 hover:underline">
-                {entry.data.title}
-              </a>
-            </h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">
-              {new Date(entry.data.pubDate).toLocaleDateString(lang, { year: 'numeric', month: 'long', day: 'numeric' })}
-            </p>
-            <p class="text-slate-700 dark:text-slate-300 text-sm mb-3 line-clamp-3">{entry.data.description}</p>
-            <a href={getEntryUrl(entry)} class="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">Read more &rarr;</a>
-          </div>
-        ))}
-      </div>
-      <div class="text-center mt-6">
-        <a href={`/${lang}/${currentCategorySlugs.creations}/`} class="text-blue-600 dark:text-blue-400 hover:underline">
-          {currentTitles.exploreMore} {sectionTitles[lang].creations} &rarr;
-        </a>
-      </div>
-    </section>
-  )}
-
-   {/* Recent Learnings Section */}
-   {recentLearnings.length > 0 && (
-    <section class="py-8">
-      <h2 class="text-3xl font-bold mb-6">{currentTitles.learnings}</h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        {recentLearnings.map(entry => (
-          <div class="p-6 bg-white dark:bg-slate-800 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-2">
-              <a href={getEntryUrl(entry)} class="text-blue-600 dark:text-blue-400 hover:underline">
-                {entry.data.title}
-              </a>
-            </h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">
-              {new Date(entry.data.pubDate).toLocaleDateString(lang, { year: 'numeric', month: 'long', day: 'numeric' })}
-            </p>
-            <p class="text-slate-700 dark:text-slate-300 text-sm mb-3 line-clamp-3">{entry.data.description}</p>
-            <a href={getEntryUrl(entry)} class="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">Read more &rarr;</a>
-          </div>
-        ))}
-      </div>
-      <div class="text-center mt-6">
-        <a href={`/${lang}/${currentCategorySlugs.learnings}/`} class="text-blue-600 dark:text-blue-400 hover:underline">
-          {currentTitles.exploreMore} {sectionTitles[lang].learnings} &rarr;
-        </a>
-      </div>
-    </section>
-  )}
-
-  {/* TODO: Add sections for Reviews & Curations, Notes & Ephemera if desired */}
-
+    {categoryDisplayOrder.map(categorySlug => (
+      <section class="category-section">
+        <h2 class="category-title">{getCategoryName(categorySlug)}</h2>
+        <div class="articles-grid">
+          {groupedEntries[categorySlug].map(entry => (
+            <a href={getEntryUrl(entry)} class="article-card">
+              <img 
+                src={entry.data.coverImage || 'https://placehold.co/600x400/243831/FFFFFF/png'} 
+                alt={entry.data.coverImageAlt || 'Placeholder image'} 
+                class="article-card__image"
+              />
+              <div class="article-card__content">
+                <h3 class="article-card__title">{entry.data.title}</h3>
+                <p class="article-card__meta">
+                  {new Date(entry.data.pubDate).toLocaleDateString(lang, { year: 'numeric', month: 'long', day: 'numeric' })}
+                </p>
+                <p class="article-card__excerpt">{entry.data.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
 </BaseLayout>

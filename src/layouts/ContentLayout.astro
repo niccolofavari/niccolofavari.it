@@ -26,42 +26,95 @@ const updatedDate = frontmatter.updatedDate ? new Date(frontmatter.updatedDate).
 // TODO: Add logic for Table of Contents (TOC) if frontmatter.toc is true
 ---
 <BaseLayout title={pageTitle} description={pageDescription} lang={lang}>
-  <article class="prose dark:prose-invert prose-lg mx-auto">
-    <header class="mb-8">
-      <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-5xl">
-        {frontmatter.title}
-      </h1>
-      <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
-        Published on <time datetime={frontmatter.pubDate}>{pubDate}</time>
-        {updatedDate && (
-          <> | Updated on <time datetime={frontmatter.updatedDate}>{updatedDate}</time></>
+  <div class="content-layout-grid">
+    <article class="main-content prose dark:prose-invert prose-lg">
+      <header class="mb-8">
+        <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-5xl">
+          {frontmatter.title}
+        </h1>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">
+          Published on <time datetime={frontmatter.pubDate}>{pubDate}</time>
+          {updatedDate && (
+            <> | Updated on <time datetime={frontmatter.updatedDate}>{updatedDate}</time></>
+          )}
+        </p>
+        {frontmatter.category && (
+          <p class="mt-1 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-500">
+            Category: {frontmatter.category}
+          </p>
         )}
-      </p>
-      {frontmatter.category && (
-        <p class="mt-1 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-500">
-          Category: {frontmatter.category}
-        </p>
-      )}
-       {frontmatter.growthStage && (
-        <p class="mt-1 text-xs text-blue-600 dark:text-blue-400">
-          Growth Stage: {frontmatter.growthStage}
-        </p>
-      )}
-    </header>
-    
-    <slot /> {/* The MDX content will be rendered here */}
+         {frontmatter.growthStage && (
+          <p class="mt-1 text-xs text-blue-600 dark:text-blue-400">
+            Growth Stage: {frontmatter.growthStage}
+          </p>
+        )}
+      </header>
+      
+      <slot /> {/* The MDX content will be rendered here */}
 
-    {frontmatter.tags && frontmatter.tags.length > 0 && (
-      <footer class="mt-12 pt-6 border-t border-slate-200 dark:border-slate-700">
-        <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">Tags:</h3>
-        <div class="flex flex-wrap gap-2">
-          {frontmatter.tags.map((tag: string) => (
-            <span class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium px-2.5 py-0.5 rounded">
-              {tag}
-            </span>
-          ))}
-        </div>
-      </footer>
-    )}
-  </article>
+      {frontmatter.tags && frontmatter.tags.length > 0 && (
+        <footer class="mt-12 pt-6 border-t border-slate-200 dark:border-slate-700">
+          <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">Tags:</h3>
+          <div class="flex flex-wrap gap-2">
+            {frontmatter.tags.map((tag: string) => (
+              <span class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium px-2.5 py-0.5 rounded">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </footer>
+      )}
+    </article>
+
+    <aside class="sidebar">
+      {/* Footnotes and other notes will go here */}
+      <div class="sticky top-24 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+        <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-3">Notes</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400">
+          This is a placeholder for footnotes or other contextual notes.
+        </p>
+        {/* Example of how footnotes might be structured if passed via frontmatter or a component */}
+        {/* {frontmatter.footnotes && frontmatter.footnotes.length > 0 && (
+          <ul class="mt-4 space-y-2">
+            {frontmatter.footnotes.map((note, index) => (
+              <li id={`fn-${index+1}`} class="text-xs">
+                <a href={`#fnref-${index+1}`} class="text-blue-600 dark:text-blue-400 hover:underline">↑{index+1}</a>: {note}
+              </li>
+            ))}
+          </ul>
+        )} */}
+      </div>
+    </aside>
+  </div>
 </BaseLayout>
+
+<style lang="scss">
+  @use '../styles/utils/variables' as *;
+
+  .content-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr; // Single column by default for mobile
+    gap: $space-l; // Use fluid variable for gap
+
+    @media (min-width: $breakpoint-lg) { // Apply two-column layout on larger screens
+      grid-template-columns: minmax(0, 2.5fr) minmax(0, 1fr); // Main content 2.5 parts, sidebar 1 part
+      // The $breakpoint-lg (992px) is a common point for sidebars.
+      // Adjust if needed based on $container-max-width (1312px)
+    }
+  }
+
+  .main-content {
+    // The `prose` class handles max-width for readability, so this column can be flexible.
+    // No specific width needed here as grid and prose classes manage it.
+  }
+
+  .sidebar {
+    // Sidebar specific styles
+    // The sticky positioning is handled by Tailwind classes on the inner div for now.
+    // You might want to add more styles here if needed.
+    font-size: $font-size-step-minus-1; // Smaller font size for sidebar notes
+  }
+
+  // Ensure prose styles don't get overly constrained by the grid if they were on the parent
+  // This is generally handled well by applying prose to the .main-content div directly.
+</style>

@@ -11,7 +11,7 @@ import {
   LICENSE_CONTENT_URL
 } from '../site-config';
 
-const { lang = 'en' } = Astro.props;
+const { lang = 'en', currentPath } = Astro.props; // Added currentPath
 
 const currentYear = new Date().getFullYear();
 const siteTitle = lang === 'it' ? SITE_TITLE_IT : SITE_TITLE_EN;
@@ -33,9 +33,13 @@ const socialLinkItems = [
   { name: 'LinkedIn', href: SOCIAL_LINKS.linkedin, icon: LinkedinIcon, label: lang === 'it' ? 'Profilo LinkedIn' : 'LinkedIn Profile' },
   { name: 'Bluesky', href: SOCIAL_LINKS.bluesky, icon: BlueskyIcon, label: lang === 'it' ? 'Profilo Bluesky' : 'Bluesky Profile' },
 ].filter(item => item.href && item.href !== "YOUR_URL_HERE" && !item.href.includes("YOUR_") );
+
+const SunIcon = `<svg id="theme-toggle-sun-icon" class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.25rem; height: 1.25rem;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+const MoonIcon = `<svg id="theme-toggle-moon-icon" class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.25rem; height: 1.25rem;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+
 ---
 <footer class="site-footer">
-  <div class="container site-footer__container">
+  <div class="site-footer__container"> {/* Removed .container class */}
     <!-- Left Column -->
     <div class="site-footer__left">
       <h3 class="site-footer__title">
@@ -53,6 +57,13 @@ const socialLinkItems = [
         </div>
       )}
 
+      <div class="site-footer__theme-toggle">
+        <button type="button" id="theme-toggle-button" aria-label={lang === 'it' ? 'Cambia tema' : 'Toggle theme'} class="theme-toggle-button">
+          <Fragment set:html={SunIcon} />
+          <Fragment set:html={MoonIcon} />
+        </button>
+      </div>
+
       <div class="site-footer__legal">
         <p>&copy; {currentYear} {AUTHOR_NAME}.</p>
         <p>
@@ -68,41 +79,81 @@ const socialLinkItems = [
         {lang === 'it' ? 'Navigazione' : 'Navigation'}
       </h4>
       <ul class="site-footer__nav-list">
-        {footerNavLinks.map(link => (
-          <li><a href={link.href} class="site-footer__nav-link">{link.name}</a></li>
-        ))}
-        {footerExtraLinks.map(link => (
-           <li><a href={link.href} class="site-footer__nav-link">{link.name}</a></li>
-        ))}
+        {footerNavLinks.map(link => {
+          const isActive = currentPath === link.href || (currentPath && link.href !== `/${lang}/` && currentPath.startsWith(link.href));
+          return (
+            <li>
+              <a 
+                href={link.href} 
+                class:list={["site-footer__nav-link", { "is-active": isActive }]}
+                aria-current={isActive ? "page" : false}
+              >
+                {link.name}
+              </a>
+            </li>
+          );
+        })}
+        {footerExtraLinks.map(link => {
+          const isActive = currentPath === link.href; // Simpler check for exact match for extra links
+          return (
+            <li>
+              <a 
+                href={link.href} 
+                class:list={["site-footer__nav-link", { "is-active": isActive }]}
+                aria-current={isActive ? "page" : false}
+              >
+                {link.name}
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </div>
   </div>
 </footer>
 
 <style lang="scss">
+  @use 'sass:color';
   @use '../styles/utils/variables' as *;
 
   .site-footer {
-    background-color: var(--color-background-secondary, lighten($color-bg-light, 5%));
+    background-color: var(--color-background-secondary, color.adjust($color-bg-light, $lightness: 5%));
     color: var(--color-text-secondary, $color-secondary); // Fallback to SCSS var
     margin-top: $space-xxl; // Use fluid variable
-    padding: $space-xl 0; // Use fluid variable
+    padding: $space-xl $space-m; // Added horizontal padding, using fluid variable
     font-size: $font-size-step-minus-1; // Use fluid variable
 
     .dark & {
-      background-color: var(--color-background-secondary-dark, darken($color-bg-dark, 5%));
-      color: var(--color-text-secondary-dark, lighten($color-secondary, 30%));
+      background-color: var(--color-background-secondary-dark, color.adjust($color-bg-dark, $lightness: -5%));
+      color: var(--color-text-secondary-dark, color.adjust($color-secondary, $lightness: 30%));
     }
   }
 
   .site-footer__container {
-    // .container class is defined in global.scss
-    display: grid;
-    gap: $space-l; // Use fluid variable
+    max-width: $container-max-width; // Apply max-width here instead of using .container
+    margin-left: auto;
+    margin-right: auto;
+    // display: grid; // Switching to Flexbox
+    // gap: $space-l; // Use fluid variable // Gap for flex can be different
 
     @media (min-width: $breakpoint-md) {
-      grid-template-columns: 1fr 1fr; // Two columns on medium screens and up
-      gap: $space-xl; // Use fluid variable
+      display: flex;
+      justify-content: space-between; // Pushes children to opposite ends
+      align-items: flex-start; // Aligns items to the top
+      gap: $space-xl; // Provides space if columns get close, but space-between handles main distribution
+    }
+  }
+
+  .site-footer__left {
+    @media (min-width: $breakpoint-md) {
+      max-width: 45%; // Explicitly set max-width for the left column
+      flex-shrink: 0; // Prevent shrinking
+    }
+  }
+
+  .site-footer__right {
+    @media (min-width: $breakpoint-md) {
+      flex-shrink: 0; // Prevent shrinking, so it takes its content width
     }
   }
 
@@ -133,6 +184,37 @@ const socialLinkItems = [
     margin-bottom: $space-l; // Use fluid variable
   }
 
+  .site-footer__theme-toggle {
+    margin-bottom: $space-l; // Add some space below the toggle
+  }
+
+  .theme-toggle-button {
+    background: none;
+    border: none;
+    padding: $space-xs / 2;
+    cursor: pointer;
+    color: var(--color-text-secondary, $color-secondary);
+    border-radius: $border-radius-md;
+    display: inline-flex; // To align icons properly if they were side-by-side
+    align-items: center;
+    justify-content: center;
+
+    &:hover, &:focus {
+      color: var(--color-primary);
+      background-color: rgba(0,0,0,0.05);
+    }
+    .dark & {
+      color: var(--color-text-secondary-dark, color.adjust($color-secondary, $lightness: 30%));
+      &:hover, &:focus {
+        background-color: rgba(255,255,255,0.1);
+      }
+    }
+    // The script will handle showing/hiding sun/moon icons by adding/removing 'hidden' class
+    // to the SVGs directly.
+    // Example style for .hidden if not provided by Tailwind/other global CSS:
+    // :global(.theme-icon.hidden) { display: none; }
+  }
+
   .social-icon {
     color: var(--color-text-secondary, $color-secondary);
     transition: color $transition-base;
@@ -142,7 +224,7 @@ const socialLinkItems = [
     }
 
     .dark & {
-        color: var(--color-text-secondary-dark, lighten($color-secondary, 30%));
+        color: var(--color-text-secondary-dark, color.adjust($color-secondary, $lightness: 30%));
     }
 
     :global(.social-icon__svg) { // Target the SVG class globally from scoped style
@@ -168,8 +250,16 @@ const socialLinkItems = [
       color: var(--color-primary);
       text-decoration: underline;
     }
+    &.is-active {
+      color: var(--color-primary); // Or var(--color-text) for more prominence
+      font-weight: 600; // Make active link bolder
+      // text-decoration: underline; // Optional: underline active link
+    }
     .dark & {
-        color: var(--color-text-secondary-dark, lighten($color-secondary, 30%));
+        color: var(--color-text-secondary-dark, color.adjust($color-secondary, $lightness: 30%));
+        &.is-active {
+            color: var(--color-primary); // Ensure active color stands out in dark mode too
+        }
     }
   }
   

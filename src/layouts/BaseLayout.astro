@@ -29,7 +29,8 @@ const { title, description = "Personal Website and Digital Garden", lang = "en" 
 		<slot /> {/* Page content will be injected here */}
 	</main>
 
-	<Footer lang={lang} />
-	{/* Add any global scripts here if needed */}
+	<Footer lang={lang} currentPath={Astro.url.pathname} />
+	<script is:inline src="/scripts/theme-toggle.js"></script>
+	{/* Add any other global scripts here if needed */}
 </body>
 </html>

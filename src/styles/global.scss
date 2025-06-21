@@ -1,5 +1,5 @@
 // src/styles/global.scss
-
+@use 'sass:color';
 // Import utilities (like variables and mixins) first so they are available globally
 @use 'utils/variables' as *;
 // @use 'utils/mixins'; // Uncomment if/when you create _mixins.scss
@@ -15,6 +15,9 @@
 // Import component-specific global styles (if any)
 // e.g., styles for buttons or cards that are used across many .astro components
 // @use 'components/buttons';
+
+// Import page-specific styles
+@use 'pages/home';
 
 // Import styles for MDX generated content
 // @use 'content/mdx'; // We will create this later
@@ -39,7 +42,7 @@
 .dark {
   --color-text: #{$color-text-light};
   --color-background: #{$color-bg-dark};
-  --color-link: #{lighten($color-link, 15%)}; // Make links a bit lighter in dark mode
+  --color-link: #{color.adjust($color-link, $lightness: 15%)}; // Make links a bit lighter in dark mode
   --color-border: #{$color-border-dark};
 }
 
