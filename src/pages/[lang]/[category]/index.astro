@@ -31,8 +31,15 @@ const { lang, category } = Astro.params;
 
 // Fetch entries for the current lang and category
 const entriesForCategory = await getCollection(lang as 'en' | 'it', (entry) => {
-  // Filter by category and ensure it's not a draft
-  return entry.slug.startsWith(`${category}/`) && entry.data.draft !== true;
+  // Filter by category. In development, show all posts. In production, hide drafts.
+  const isDraft = entry.data.draft === true;
+  const isDev = import.meta.env.DEV;
+  
+  // Basic filter: must match the current category
+  const inCategory = entry.slug.startsWith(`${category}/`);
+  
+  // In production, hide drafts. In dev, show everything.
+  return inCategory && (isDev || !isDraft);
 });
 
 // Sort entries by publication date, newest first

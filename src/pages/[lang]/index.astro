@@ -14,8 +14,11 @@ export async function getStaticPaths() {
 const { lang } = Astro.params;
 const isItalian = lang === 'it';
 
-const allEntries = await getCollection(lang as 'en' | 'it', ({ data }) => {
-  return data.draft !== true;
+const allEntries = await getCollection(lang as 'en' | 'it', (entry) => {
+  // In development, show all posts. In production, hide drafts.
+  const isDraft = entry.data.draft === true;
+  const isDev = import.meta.env.DEV;
+  return isDev || !isDraft;
 });
 
 const groupedEntries = allEntries.reduce<Record<string, CollectionEntry<"en" | "it">[]>>((acc, entry) => {
