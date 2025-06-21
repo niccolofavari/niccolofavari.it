@@ -1,6 +1,6 @@
 ---
 // src/pages/[lang]/index.astro
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { SITE_TITLE_EN, SITE_TITLE_IT, SITE_DESCRIPTION_EN, SITE_DESCRIPTION_IT, NAV_LINKS_CONFIG } from '../../site-config';
 
@@ -14,9 +14,11 @@ export async function getStaticPaths() {
 const { lang } = Astro.params;
 const isItalian = lang === 'it';
 
-const allEntries = await getCollection(lang as 'en' | 'it');
+const allEntries = await getCollection(lang as 'en' | 'it', ({ data }) => {
+  return data.draft !== true;
+});
 
-const groupedEntries = allEntries.reduce((acc, entry) => {
+const groupedEntries = allEntries.reduce<Record<string, CollectionEntry<"en" | "it">[]>>((acc, entry) => {
   const [categorySlug] = entry.slug.split('/');
   if (!acc[categorySlug]) {
     acc[categorySlug] = [];
@@ -39,12 +41,12 @@ const categoryDisplayOrder = navLinks
 const siteTitle = isItalian ? SITE_TITLE_IT : SITE_TITLE_EN;
 const siteDescription = isItalian ? SITE_DESCRIPTION_EN : SITE_DESCRIPTION_IT;
 
-function getCategoryName(slug) {
+function getCategoryName(slug: string) {
   const link = navLinks.find(l => l.categorySlug === slug);
   return link ? link.name : slug;
 }
 
-function getEntryUrl(entry) {
+function getEntryUrl(entry: CollectionEntry<"en" | "it">) {
   const [category, ...slugParts] = entry.slug.split('/');
   return `/${lang}/${category}/${slugParts.join('/')}`;
 }

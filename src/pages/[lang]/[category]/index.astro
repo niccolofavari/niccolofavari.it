@@ -31,8 +31,8 @@ const { lang, category } = Astro.params;
 
 // Fetch entries for the current lang and category
 const entriesForCategory = await getCollection(lang as 'en' | 'it', (entry) => {
-  // Filter by category (first part of the slug)
-  return entry.slug.startsWith(`${category}/`);
+  // Filter by category and ensure it's not a draft
+  return entry.slug.startsWith(`${category}/`) && entry.data.draft !== true;
 });
 
 // Sort entries by publication date, newest first

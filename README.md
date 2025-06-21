@@ -55,28 +55,55 @@ The visual design aims to be clean, minimalist, and intentional, prioritizing re
 
 More information is available in the [Design & Typography](./.clinerules/04-design-typography.md) document.
 
+## Project Structure
+
+This project uses a sophisticated setup to keep the source code open while keeping the content (especially drafts) private.
+
+-   **Public Repository (`niccolofavari.it`)**: This is the main repository. It contains all the Astro application code, components, layouts, and styles. This is the repository you are currently viewing.
+-   **Private Content Repository (`blog-content`)**: A separate, private repository that contains only the MDX content files located in `src/content/`.
+-   **Git Submodule**: The private content repository is linked to this public repository as a [Git Submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules). This allows the public code to access the private content during the build process without exposing the content repository itself.
+
 ## Getting Started
 
-*(Instructions for setting up the project locally will be added here once the Astro project is initialized and basic dependencies are defined. This typically involves cloning the repository, installing dependencies via npm/yarn/pnpm, and running the development server.)*
+Because this project uses a Git submodule for content, the setup process is slightly different from a standard repository.
 
-```bash
-# Example commands (will be updated)
-# git clone [repository-url]
-# cd [repository-name]
-# npm install
-# npm run dev
-```
+1.  **Clone the Repository**:
+    You must use the `--recurse-submodules` flag to clone the main repository and initialize the content submodule at the same time.
 
-## Project Structure Overview
+    ```bash
+    git clone --recurse-submodules git@github.com:niccolofavari/niccolofavari.it.git
+    cd niccolofavari.it
+    ```
 
--   `.clinerules/`: Contains guidelines and instructions for Cline, the AI development assistant.
--   `src/content/`: Houses all MDX content, organized by language (e.g., `en/`, `it/`) and then by category.
--   `src/components/`: Astro components.
--   `src/components/mdx/`: Custom components for use within MDX files.
--   `src/layouts/`: Astro layout components for page structure.
--   `src/assets/`: Static assets processed by Astro (e.g., images for the `<Image>` component).
--   `public/`: Static assets served directly (e.g., favicons, fonts).
--   `src/styles/`: Global SCSS styles (`global.scss`) and partials (e.g., `_variables.scss`, `_reset.scss`, `_typography.scss`) organized in subdirectories like `base/`, `utils/`.
+2.  **Install Dependencies**:
+    This project uses `npm` for package management.
+
+    ```bash
+    npm install
+    ```
+
+3.  **Run the Development Server**:
+    This command starts the local development server.
+
+    ```bash
+    npm run dev
+    ```
+
+## Content Management
+
+-   **Location**: All content is managed in the private `blog-content` repository, which is mapped to the `src/content` directory.
+-   **Drafts**: To prevent an article from being published, add `draft: true` to its MDX frontmatter. The build process is configured to automatically exclude any posts marked as a draft.
+
+## Deployment
+
+This project is configured for automatic deployment to GitHub Pages.
+
+1.  **Trigger**: A deployment is automatically triggered on every `push` to the `main` branch.
+2.  **Process**: A GitHub Action (`.github/workflows/deploy.yml`) checks out both the public repository and the private content submodule, builds the site, and deploys the static output.
+3.  **Authentication**: For the GitHub Action to access the private `blog-content` repository, a **Personal Access Token (PAT)** must be configured.
+
+    -   **Create a PAT**: Follow the [GitHub documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) to create a "classic" PAT with the `repo` scope.
+    -   **Add to Secrets**: Add this token as a repository secret named `GH_PAT` in the `Settings` > `Secrets and variables` > `Actions` section of this public repository.
 
 ## Contributing
 

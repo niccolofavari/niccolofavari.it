@@ -7,8 +7,8 @@ import GameReviewCard from '../../../components/reviews/GameReviewCard.astro';
 import GadgetReviewCard from '../../../components/reviews/GadgetReviewCard.astro';
 
 // 1. Fetch all review entries for the 'it' language
-const allItalianReviews = await getCollection('it', ({ slug }) => {
-  return slug.startsWith('recensioni-curiosita/');
+const allItalianReviews = await getCollection('it', ({ slug, data }) => {
+  return slug.startsWith('recensioni-curiosita/') && data.draft !== true;
 });
 
 // 2. Group reviews by contentType
